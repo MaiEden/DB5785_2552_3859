@@ -24,22 +24,11 @@ This workshop introduces key database concepts and provides hands-on practice in
 1. **Entity-Relationship Diagram (ERD)**:
    - Designed an ERD to model relationships and entities for the database structure.
    - Focused on normalizing the database and ensuring scalability.
-
-   **[Add ERD Snapshot Here]**
-   
- images/erd/addimagetoreadme.PNG  
-> ![air bnb](images/erd/erd_airbnb.png)
-
-images/erd/one.jpg
-> ![add_image_one.png](images/erd/one.jpg)
-
-   *(Upload or link to the ERD image or file)*
-   
+![ERD Diagram](images/erd/erd.png)
 2. **Data Structure Diagram (DSD)**:
    - Described the DSD for the model relationships and entities of the database structure.
    - Focused on normalizing the database and ensuring scalability.
-
-   **[Add DSD Snapshot Here]**
+![DSD Diagram](images/erd/DSD.png)
    
 3. **Creating Tables**:
    - Translated the ERD into actual tables, defining columns, data types, primary keys, and foreign keys.
