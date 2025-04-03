@@ -251,10 +251,17 @@ INSERT INTO blockedPassenger (reason, blockedDate, unblockDate, passengerID) VAL
 - 👉 **[insertTables here](./שלב%20א/sql/insertTables.sql)**
 
 ## 4. Backup and Restoration
-To ensure data integrity, a full backup of the database was created and tested for restoration.
-!**[](./שלב%20א/images/erd/creatingBackupScreenshot.png)**
-- **Backup File:** 👉 **[Database Backup](./שלב%20א/Tickets&bookingBackup03-04-2025)**
-- **Restoration Process:** Successfully tested on a different system to verify correctness.
+To ensure data integrity, a full backup of the database was created and tested for restoration. Here how the  **[Database Backup](./שלב%20א/Tickets&bookingBackup03-04-2025)** was created:
+
+**![backup](./שלב%20א/images/erd/creatingBackupScreenshot.png)**
+
+
+- **Restoration Process:** We created an empty database and then we restored the backup that was created.We did that way:
+
+
+**![restoration](./שלב%20א/images/erd/restoringDataScreenshot.png)**
+
+We checked and all the data was restored successfully.
 
 ---
 
@@ -264,9 +271,3 @@ This phase covered the full database design and implementation, ensuring:
 - Efficient data handling
 - Secure backup and recovery procedures
 
-Future steps include optimizing queries, adding advanced indexing, and integrating stored procedures.
-
----
-
-## Submission
-All required files are included in the **DBProject** repository under the "Phase A" folder.
