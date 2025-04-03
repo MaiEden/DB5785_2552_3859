@@ -29,13 +29,14 @@ def assign_trip_ids(seat_file, trip_file, output_file):
         # שמירת השימוש ב-tripID עבור seat_number אם נמצא ערך תקף
         if selected_trip is not None:
             seat_history[seat].add(selected_trip)
-    
+
+    seat_df['tripID'] = pd.Series(assigned_trips, dtype='Int64')
     # הוספת עמודת tripID לקובץ seat
-    seat_df['tripID'] = assigned_trips
+    #seat_df['tripID'] = assigned_trips
     
     # שמירת הקובץ החדש
     seat_df.to_csv(output_file, index=False)
     print(f"File saved as {output_file}")
 
 # קריאה לפונקציה לדוגמא
-assign_trip_ids('Seat_no_tripID.csv', 'Trip.csv', 'Seat.csv')
+assign_trip_ids('../DB5785_2552_3859/code/python/שלב א/Seat_no_tripID.csv', 'Trip.csv', 'Seat.csv')
