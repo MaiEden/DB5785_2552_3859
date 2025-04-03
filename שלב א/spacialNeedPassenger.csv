@@ -1,101 +1,100 @@
-hasAssistAnimal,ContactPhone,passengerID,disabiltyType
-False,376-711-3967,347237687,Hearing Impairment
-True,423-458-2290,340871210,Autism Spectrum Disorder
-False,762-449-4981,403452672,Autism Spectrum Disorder
-False,576-708-3263,340361397,Chronic Illness
-True,526-220-0414,363684238,Hearing Impairment
-True,676-139-7734,398298090,Visual Impairment
-True,251-959-7742,259733358,Hearing Impairment
-True,663-419-7674,321030097,Hearing Impairment
-True,680-268-2632,318468213,Intellectual Disability
-False,184-308-2205,413376397,Chronic Illness
-False,124-794-2966,245764314,Wheelchair User
-True,908-640-4481,224528877,Wheelchair User
-True,571-676-1041,273894635,Neurological Disorder
-False,663-358-6612,316175494,Autism Spectrum Disorder
-True,240-749-4776,327748388,Autism Spectrum Disorder
-True,467-895-4657,342532611,Autism Spectrum Disorder
-True,784-697-4258,418732940,Neurological Disorder
-False,838-695-2511,409767245,Chronic Illness
-True,333-346-1002,428127190,Visual Impairment
-False,617-260-5467,311243367,Intellectual Disability
-False,538-292-9740,342447415,Visual Impairment
-False,873-618-7993,308409653,Intellectual Disability
-True,502-544-1029,280405720,Intellectual Disability
-False,533-619-3266,331113856,Mental Health Condition
-True,334-678-1386,252905072,Intellectual Disability
-False,445-841-3077,478973666,Mental Health Condition
-False,554-128-7745,346322669,Autism Spectrum Disorder
-False,942-867-6131,371883046,Wheelchair User
-False,868-323-4340,381809060,Speech Disorder
-True,799-890-8623,218977084,Hearing Impairment
-False,819-161-0676,418378948,Visual Impairment
-False,273-939-3336,234720081,Hearing Impairment
-False,982-559-8470,301759120,Speech Disorder
-True,699-918-0000,471175542,Intellectual Disability
-False,152-692-5909,418248543,Physical Disability
-True,126-996-2890,229706312,Speech Disorder
-False,607-388-2223,387959720,Wheelchair User
-True,452-152-8966,245509154,Speech Disorder
-True,215-954-1167,325927220,Wheelchair User
-True,329-824-4586,314274095,Hearing Impairment
-False,726-369-7967,275518953,Autism Spectrum Disorder
-True,664-923-3199,382315622,Mental Health Condition
-True,670-407-9014,492402226,Autism Spectrum Disorder
-True,779-838-6820,436124964,Physical Disability
-False,332-785-6588,235986217,Chronic Illness
-True,435-466-9188,287203807,Autism Spectrum Disorder
-True,693-291-4452,395856156,Visual Impairment
-False,374-633-0839,357594281,Wheelchair User
-False,126-143-1792,351913395,Autism Spectrum Disorder
-True,552-281-9781,319196425,Speech Disorder
-False,836-632-7096,277226756,Neurological Disorder
-False,940-134-4769,293036599,Neurological Disorder
-False,297-504-9154,234152170,Wheelchair User
-False,135-658-4685,269938606,Hearing Impairment
-False,594-995-8930,470569977,Hearing Impairment
-True,529-415-4970,451822235,Neurological Disorder
-True,504-134-5908,481391508,Speech Disorder
-False,573-426-3515,420172906,Autism Spectrum Disorder
-True,287-434-1733,286165882,Intellectual Disability
-False,992-146-1632,496468263,Neurological Disorder
-False,240-570-9173,333673232,Chronic Illness
-True,716-972-6231,264999911,Intellectual Disability
-False,663-861-3961,428421172,Mental Health Condition
-False,559-308-2942,246680407,Neurological Disorder
-True,939-713-9033,418549852,Physical Disability
-True,768-922-1926,333408956,Wheelchair User
-True,333-834-8579,395040359,Neurological Disorder
-True,473-125-6193,403523499,Autism Spectrum Disorder
-True,599-804-8871,411283403,Wheelchair User
-False,510-301-4272,316488396,Intellectual Disability
-True,602-597-0419,410093549,Physical Disability
-True,542-820-1126,419473016,Speech Disorder
-True,891-897-8966,212824967,Speech Disorder
-False,561-310-6078,232918685,Visual Impairment
-False,688-486-8185,291931970,Physical Disability
-True,837-675-4291,277813663,Intellectual Disability
-False,192-252-7195,313934429,Chronic Illness
-True,579-139-8847,326982283,Chronic Illness
-False,291-959-4707,274526456,Autism Spectrum Disorder
-True,906-585-8664,257395588,Physical Disability
-True,484-279-2950,328924117,Wheelchair User
-True,895-812-4078,314533108,Hearing Impairment
-True,913-773-4011,386272781,Chronic Illness
-True,166-965-3992,445251551,Speech Disorder
-True,818-817-9211,429579779,Intellectual Disability
-False,877-605-0428,213637554,Chronic Illness
-True,110-136-7265,381182167,Physical Disability
-True,549-842-6100,307763260,Neurological Disorder
-False,265-945-8912,295335242,Intellectual Disability
-False,830-714-7399,441867412,Wheelchair User
-True,422-711-5349,470323386,Visual Impairment
-False,412-355-8462,239779973,Wheelchair User
-False,390-243-3716,439574962,Mental Health Condition
-False,729-764-3728,373896853,Chronic Illness
-True,336-340-1069,349642644,Autism Spectrum Disorder
-True,120-553-0566,305598446,Physical Disability
-False,555-786-1875,267901486,Physical Disability
-False,190-711-7364,279520978,Intellectual Disability
-True,643-591-0983,453828915,Intellectual Disability
-False,731-259-4729,367389286,Neurological Disorder
+FALSE,050-7178645,293036599,Hearing Impairment
+TRUE,053-2711192,234152170,Autism Spectrum Disorder
+FALSE,050-1261009,269938606,Autism Spectrum Disorder
+FALSE,055-4830783,470569977,Chronic Illness
+TRUE,058-2640974,451822235,Hearing Impairment
+TRUE,058-5002530,481391508,Visual Impairment
+TRUE,053-4430067,420172906,Hearing Impairment
+TRUE,054-2950011,286165882,Hearing Impairment
+TRUE,055-6895976,496468263,Intellectual Disability
+FALSE,050-7574208,333673232,Chronic Illness
+FALSE,050-4696703,264999911,Wheelchair User
+TRUE,050-9044713,428421172,Wheelchair User
+TRUE,055-6507639,246680407,Neurological Disorder
+FALSE,058-7045092,418549852,Autism Spectrum Disorder
+TRUE,055-4007454,333408956,Autism Spectrum Disorder
+TRUE,054-7619366,395040359,Autism Spectrum Disorder
+TRUE,053-6198271,403523499,Neurological Disorder
+FALSE,055-3126419,411283403,Chronic Illness
+TRUE,058-5992733,316488396,Visual Impairment
+FALSE,054-8017864,410093549,Intellectual Disability
+FALSE,054-8107287,419473016,Visual Impairment
+FALSE,050-9101939,212824967,Intellectual Disability
+TRUE,054-8083925,232918685,Intellectual Disability
+FALSE,058-9499514,291931970,Mental Health Condition
+TRUE,050-1945829,277813663,Intellectual Disability
+FALSE,053-9075046,313934429,Mental Health Condition
+FALSE,052-6505731,326982283,Autism Spectrum Disorder
+FALSE,050-5770454,274526456,Wheelchair User
+FALSE,050-7746622,257395588,Speech Disorder
+TRUE,052-1766719,328924117,Hearing Impairment
+FALSE,054-5221685,314533108,Visual Impairment
+FALSE,053-4936338,386272781,Hearing Impairment
+FALSE,053-6667253,445251551,Speech Disorder
+TRUE,053-2109956,429579779,Intellectual Disability
+FALSE,058-6565400,213637554,Physical Disability
+TRUE,052-9905218,381182167,Speech Disorder
+FALSE,053-2550997,307763260,Wheelchair User
+TRUE,055-7809914,295335242,Speech Disorder
+TRUE,054-4442138,441867412,Wheelchair User
+TRUE,055-4494495,470323386,Hearing Impairment
+FALSE,055-4520119,239779973,Autism Spectrum Disorder
+TRUE,055-6268542,439574962,Mental Health Condition
+TRUE,052-4607736,373896853,Autism Spectrum Disorder
+TRUE,053-9634774,349642644,Physical Disability
+FALSE,052-7914498,305598446,Chronic Illness
+TRUE,055-8304381,267901486,Autism Spectrum Disorder
+TRUE,055-7532810,279520978,Visual Impairment
+FALSE,054-5954182,453828915,Wheelchair User
+FALSE,058-6327981,367389286,Autism Spectrum Disorder
+TRUE,050-3169802,486831731,Speech Disorder
+FALSE,053-1785889,426828887,Neurological Disorder
+FALSE,050-7012645,271280468,Neurological Disorder
+FALSE,052-8492433,400517129,Wheelchair User
+FALSE,052-1639051,472542156,Hearing Impairment
+FALSE,055-2841709,283779145,Hearing Impairment
+TRUE,055-1147705,448549907,Neurological Disorder
+TRUE,053-1546164,259792574,Speech Disorder
+FALSE,054-5912885,256855583,Autism Spectrum Disorder
+TRUE,058-8529776,211669312,Intellectual Disability
+FALSE,052-7169906,230308241,Neurological Disorder
+FALSE,055-3529066,395487373,Chronic Illness
+TRUE,055-2626718,375275218,Intellectual Disability
+FALSE,053-5851006,419386502,Mental Health Condition
+FALSE,050-6578259,462256435,Neurological Disorder
+TRUE,055-2371553,334058843,Physical Disability
+TRUE,052-8577749,452319204,Wheelchair User
+TRUE,050-7539078,439187098,Neurological Disorder
+TRUE,053-7512292,397061680,Autism Spectrum Disorder
+TRUE,054-4884872,288389311,Wheelchair User
+FALSE,058-2765526,234712072,Intellectual Disability
+TRUE,054-6963222,371335686,Physical Disability
+TRUE,050-8553862,368276395,Speech Disorder
+TRUE,055-6862110,444374221,Speech Disorder
+FALSE,058-4530271,325768507,Visual Impairment
+FALSE,058-6537342,422491937,Physical Disability
+TRUE,055-8364967,263836623,Intellectual Disability
+FALSE,050-5738181,268566302,Chronic Illness
+TRUE,052-5124938,239298782,Chronic Illness
+FALSE,053-4341192,492498079,Autism Spectrum Disorder
+TRUE,055-7194575,314022750,Physical Disability
+TRUE,058-7986196,363916163,Wheelchair User
+TRUE,054-8576147,391326641,Hearing Impairment
+TRUE,055-3379018,358555029,Chronic Illness
+TRUE,054-1768878,361257721,Speech Disorder
+TRUE,054-5851448,211971937,Intellectual Disability
+FALSE,055-2010720,351687968,Chronic Illness
+TRUE,058-2875889,299754673,Physical Disability
+TRUE,053-5592667,324606732,Neurological Disorder
+FALSE,050-2670144,356433171,Intellectual Disability
+FALSE,055-1509574,481962520,Wheelchair User
+TRUE,050-5940647,481933433,Visual Impairment
+FALSE,053-7815309,359177343,Wheelchair User
+FALSE,052-6123643,431304405,Mental Health Condition
+FALSE,050-6506914,281502610,Chronic Illness
+TRUE,052-1792374,420361827,Autism Spectrum Disorder
+TRUE,052-8203196,297609425,Physical Disability
+FALSE,054-7800400,444182239,Physical Disability
+FALSE,052-8091002,411191916,Intellectual Disability
+TRUE,050-1524647,432055871,Intellectual Disability
+FALSE,054-3840999,359879878,Neurological Disorder
