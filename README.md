@@ -226,19 +226,33 @@ SELECT * FROM public.blockedpassenger
 ORDER BY passengerid ASC
 .....
 ```
-- 👉 **[Select Queries](./selectAll.sql)**
+- 👉 **[SelectAll here](./שלב%20א/sql/selectAll.sql)**
 
-Example query:
-
+### **Drop tables**
+We wrote a sql script that drop all tables from the database. begining of it:
 ```sql
-SELECT * FROM Passenger;
+DROP TABLE IF EXISTS discountTicket;
+DROP TABLE IF EXISTS Ticket;
+DROP TABLE IF EXISTS SpecialNeedPassenger;
+.....
 ```
+- 👉 **[DropTables here](./שלב%20א/sql/DropTables.sql)**
 
----
+### **insert records using sql**
+We inserted three records for each table using sql. begining of it:
+```sql
+-- insert into blockedPassenger
+INSERT INTO blockedPassenger (reason, blockedDate, unblockDate, passengerID) VALUES
+('Payment issues', '2020-10-01', '2021-07-20', 241228265),
+('Multiple no-shows', '2022-06-19', '2023-07-27', 449210707),
+('Multiple no-shows', '2024-06-03', NULL, 225375571);
+.....
+```
+- 👉 **[insertTables here](./שלב%20א/sql/insertTables.sql)**
 
 ## 4. Backup and Restoration
 To ensure data integrity, a full backup of the database was created and tested for restoration.
-- **Backup File:** 👉 **[Database Backup](./backup_YYYYMMDD.sql)**
+- **Backup File:** 👉 **[Database Backup](./שלב%20א/Tickets&bookingBackup03-04-2025)**
 - **Restoration Process:** Successfully tested on a different system to verify correctness.
 
 ---
