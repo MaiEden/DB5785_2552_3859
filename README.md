@@ -252,6 +252,7 @@ INSERT INTO blockedPassenger (reason, blockedDate, unblockDate, passengerID) VAL
 
 ## 4. Backup and Restoration
 To ensure data integrity, a full backup of the database was created and tested for restoration.
+!**[](./שלב%20א/images/erd/creatingBackupScreenshot.png)**
 - **Backup File:** 👉 **[Database Backup](./שלב%20א/Tickets&bookingBackup03-04-2025)**
 - **Restoration Process:** Successfully tested on a different system to verify correctness.
 
