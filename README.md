@@ -1,278 +1,111 @@
-# 🧑‍💻 DB5785 - PostgreSQL and Docker Workshop 🗄️🐋
+# Database Project - Phase A
 
-This workshop will guide you through setting up and managing a _PostgreSQL database_ using Docker.  
-You will also explore how to use _pgAdmin_ GUI to interact with the database and perform various tasks.  
-
----
-## Workshop Outcomes
-
-By the end of this workshop, you will:
-
-- Understand how to set up PostgreSQL and pgAdmin using Docker.
-- Learn how to use Docker volumes to persist database data.
-- Gain hands-on experience with basic and advanced database operations.
-
-----
-
-<a name="workshop-id"></a>
-## 📝 Workshop Files & Scripts (to be modified by the students) 🧑‍🎓 
-
-This workshop introduces key database concepts and provides hands-on practice in a controlled, containerized environment using PostgreSQL within Docker.
-
-### Key Concepts Covered:
-
-1. **Entity-Relationship Diagram (ERD)**:
-   - Designed an ERD to model relationships and entities for the database structure.
-   - Focused on normalizing the database and ensuring scalability.
-![ERD Diagram](images/erd/erd.png)
-2. **Data Structure Diagram (DSD)**:
-   - Described the DSD for the model relationships and entities of the database structure.
-   - Focused on normalizing the database and ensuring scalability.
-![DSD Diagram](images/erd/DSD.png)
-   
-3. **Creating Tables**:
-   - Translated the ERD into actual tables, defining columns, data types, primary keys, and foreign keys.
-   - Utilized SQL commands for table creation.
-
-   **[Add Table Creation Code Here]**
-   *(Provide or link to the SQL code used to create the tables)*
-
-4. **Generating Sample Data**:
-   - Generated sample data to simulate real-world scenarios using **SQL Insert Statements**.
-   - Used scripts to automate bulk data insertion for large datasets.
-
-   **[Add Sample Data Insert Script Here]**
-   *(Upload or link to the sample data insert scripts)*
-
-5. **Writing SQL Queries**:
-   - Practiced writing **SELECT**, **JOIN**, **GROUP BY**, and **ORDER BY** queries.
-   - Learned best practices for querying data efficiently, including indexing and optimization techniques.
-
-   **[Add Example SQL Query Here]**
-   *(Provide or link to example SQL queries)*
-
-6. **Stored Procedures and Functions**:
-   - Created reusable **stored procedures** and **functions** to handle common database tasks.
-   - Used SQL to manage repetitive operations and improve performance.
-
-   **[Add Stored Procedures/Function Code Here]**
-   *(Upload or link to SQL code for stored procedures and functions)*
-
-7. **Views**:
-   - Created **views** to simplify complex queries and provide data abstraction.
-   - Focused on security by limiting user access to certain columns or rows.
-
-   **[Add View Code Here]**
-   *(Provide or link to the SQL code for views)*
-
-8. **PostgreSQL with Docker**:
-   - Set up a Docker container to run **PostgreSQL**.
-   - Configured database connections and managed data persistence within the containerized environment.
-
-   **[Add Docker Configuration Code Here]**
-   *(Link to or provide the Docker run command and any configuration files)*
+## Table of Contents
+1. Introduction
+2. Database Design
+   - ERD Diagram
+   - DSD Schema
+   - Normalization
+3. Database Implementation
+   - Creating Tables
+   - Data Insertion Methods
+   - Querying Data
+4. Backup and Restoration
+5. Conclusion
 
 ---
 
-## 💡 Workshop Outcomes
+## 1. Introduction
+This project involves designing and implementing a database for a transportation system, handling passengers, trips, seating, tickets, and discounts. The database is structured to ensure data integrity, efficient querying, and compliance with normalization standards.
 
-By the end of this workshop, you should be able to:
-
-- Design and create a database schema based on an ERD.
-- Perform CRUD (Create, Read, Update, Delete) operations with SQL.
-- Write complex queries using joins, aggregations, and subqueries.
-- Create and use stored functions and procedures for automation and performance.
-- Work effectively with PostgreSQL inside a Docker container for development and testing.
-
----
-
-## Additional Tasks for Students
-
-### 1. **Database Backup and Restore**
-   - Use `pg_dump` to back up your database and `pg_restore` or `psql` to restore it.
-
-   ```bash
-   # Backup the database
-   pg_dump -U postgres -d your_database_name -f backup.sql
-
-   # Restore the database
-   psql -U postgres -d your_database_name -f backup.sql
-   ```
-
-### 2. **Indexing and Query Optimization**
-   - Create indexes on frequently queried columns and analyze query performance.
-
-   ```sql
-   -- Create an index
-   CREATE INDEX idx_your_column ON your_table(your_column);
-
-   -- Analyze query performance
-   EXPLAIN ANALYZE SELECT * FROM your_table WHERE your_column = 'value';
-   ```
-
-### 3. **User Roles and Permissions**
-   - Create user roles and assign permissions to database objects.
-
-   ```sql
-   -- Create a user role
-   CREATE ROLE read_only WITH LOGIN PASSWORD 'password';
-
-   -- Grant read-only access to a table
-   GRANT SELECT ON your_table TO read_only;
-   ```
-
-### 4. **Advanced SQL Queries**
-   - Write advanced SQL queries using window functions, recursive queries, and CTEs.
-
-   ```sql
-   -- Example: Using a window function
-   SELECT id, name, salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS rank
-   FROM employees;
-   ```
-
-### 6. **Database Monitoring**
-   - Use PostgreSQL's built-in tools to monitor database performance.
-
-   ```sql
-   -- View active queries
-   SELECT * FROM pg_stat_activity;
-
-   -- Analyze table statistics
-   SELECT * FROM pg_stat_user_tables;
-   ```
-
-### 7. **Using Extensions**
-   - Install and use PostgreSQL extensions like `pgcrypto` or `postgis`.
-
-   ```sql
-   -- Install the pgcrypto extension
-   CREATE EXTENSION pgcrypto;
-
-   -- Example: Encrypt data
-   INSERT INTO users (username, password) VALUES ('alice', crypt('password', gen_salt('bf')));
-   ```
-
-### 8. **Automating Tasks with Cron Jobs**
-   - Automate database maintenance tasks (e.g., backups) using cron jobs.
-
-   ```bash
-   # Example: Schedule a daily backup at 2 AM
-   0 2 * * * pg_dump -U postgres -d your_database_name -f /backups/backup_$(date +\%F).sql
-   ```
-
-### 9. **Database Testing**
-   - Write unit tests for your database using `pgTAP`.
-
-   ```sql
-   -- Example: Test if a table exists
-   SELECT * FROM tap.plan(1);
-   SELECT tap.has_table('public', 'your_table', 'Table should exist');
-   SELECT * FROM tap.finish();
-   ```
+The key functionalities of the system include:
+- Managing passenger information
+- Handling trip and seat assignments
+- Processing ticket purchases and discounts
+- Managing accessibility requirements
 
 ---
 
-## Troubleshooting
+## 2. Database Design
 
-### 1. **Connection Issues**
-   - **Problem**: Unable to connect to the PostgreSQL or pgAdmin container.
-   - **Solution**:  
-     - Ensure both the PostgreSQL and pgAdmin containers are running. You can check their status by running:
-       ```bash
-       docker ps
-       ```
-     - Verify that you have the correct container names. If you are unsure of the names, you can list all containers (running and stopped) with:
-       ```bash
-       docker ps -a
-       ```
-     - Ensure that the correct ports are mapped (e.g., `5432:5432` for PostgreSQL and `5050:80` for pgAdmin).
-     - Verify that the `postgres` container's name is used in pgAdmin's connection settings.
-     - If using `localhost` and experiencing connection issues, try using the container name instead (e.g., `postgres`).
-     - Check the logs for any error messages:
-       ```bash
-       docker logs postgres
-       docker logs pgadmin
-       ```
-     - If you are still having trouble, try restarting the containers:
-       ```bash
-       docker restart postgres
-       docker restart pgadmin
-       ```
+### **ERD Diagram**
+The Entity-Relationship Diagram (ERD) was designed using ERDPlus and represents the relationships between the six main entities: `Passenger`, `Trip`, `Seat`, `Ticket`, `Discount`, and `Disability`.
 
-### 2. **Forgot Password**
-   - **Problem**: You've forgotten the password for pgAdmin or PostgreSQL.
-   - **Solution**:
-     - For pgAdmin:
-       1. Stop the pgAdmin container:
-          ```bash
-          docker stop pgadmin
-          ```
-       2. Restart the container with a new password:
-          ```bash
-          docker run --name pgadmin -d -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=new_password dpage/pgadmin4:latest
-          ```
-     - For PostgreSQL:
-       1. If you've forgotten the `POSTGRES_PASSWORD` for PostgreSQL, you’ll need to reset it. First, stop the container:
-          ```bash
-          docker stop postgres
-          ```
-       2. Restart it with a new password:
-          ```bash
-          docker run --name postgres -e POSTGRES_PASSWORD=new_password -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
-          ```
+👉 **[ERD Diagram](./ERD_Diagram.png)**
 
-### 3. **Port Conflicts**
-   - **Problem**: Port is already in use on the host machine (e.g., port 5432 or 5050).
-   - **Solution**:  
-     - If a port conflict occurs (for example, PostgreSQL's default port `5432` is already in use), you can map a different host port to the container's port by changing the `-p` flag:
-       ```bash
-       docker run --name postgres -e POSTGRES_PASSWORD=your_password -d -p 5433:5432 -v postgres_data:/var/lib/postgresql/data postgres
-       ```
-       This would map PostgreSQL’s internal `5432` to the host’s `5433` port.
-     - Similarly, for pgAdmin, you can use a different port:
-       ```bash
-       docker run --name pgadmin -d -p 5051:80 -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4:latest
-       ```
+### **DSD Schema**
+After validating the ERD, we generated the Data Structure Diagram (DSD) to confirm that relationships and constraints were correctly defined.
 
-### 4. **Unable to Access pgAdmin in Browser**
-   - **Problem**: You cannot access pgAdmin through `http://localhost:5050` (or other port you have set).
-   - **Solution**:
-     - Ensure the pgAdmin container is running:
-       ```bash
-       docker ps
-       ```
-     - Double-check that the port mapping is correct and no firewall is blocking the port.
-     - If using a non-default port (e.g., `5051` instead of `5050`), ensure you access it by visiting `http://localhost:5051` instead.
+👉 **[DSD Schema](./DSD_Schema.png)**
 
-### 5. **Data Persistence Issue**
-   - **Problem**: After stopping or removing the PostgreSQL container, the data is lost.
-   - **Solution**:
-     - Ensure that you are using a Docker volume for data persistence. When starting the container, use the `-v` flag to map the volume:
-       ```bash
-       docker run --name postgres -e POSTGRES_PASSWORD=your_password -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
-       ```
-     - To inspect or back up the volume:
-       ```bash
-       docker volume inspect postgres_data
-       ```
-
-### 6. **Accessing pgAdmin with Docker Network**
-   - **Problem**: If you are trying to connect from pgAdmin to PostgreSQL and the connection is unsuccessful.
-   - **Solution**:
-     - Make sure both containers (PostgreSQL and pgAdmin) are on the same Docker network:
-       ```bash
-       docker network create pg_network
-       docker run --name postgres --network pg_network -e POSTGRES_PASSWORD=your_password -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
-       docker run --name pgadmin --network pg_network -d -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4:latest
-       ```
-     - This ensures that both containers can communicate over the internal network created by Docker.
+### **Normalization**
+The schema adheres to **Third Normal Form (3NF)** by ensuring:
+- Elimination of redundant data
+- Every non-key attribute is functionally dependent on the primary key
+- No transitive dependencies exist
 
 ---
 
+## 3. Database Implementation
 
-## 👇 Resources
+### **Creating Tables**
+Tables were created using SQL scripts, ensuring proper data types and relationships. Below is a simplified version of the schema:
 
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [pgAdmin Documentation](https://www.pgadmin.org/docs/)
-- [Docker Documentation](https://docs.docker.com/)
+```sql
+CREATE TABLE Passenger (
+    passengerID INT PRIMARY KEY,
+    fullName VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
+);
 
+CREATE TABLE Ticket (
+    ticketID INT PRIMARY KEY,
+    purchaseDate DATE NOT NULL,
+    price NUMERIC(10,2) NOT NULL,
+    passengerID INT NOT NULL,
+    FOREIGN KEY (passengerID) REFERENCES Passenger(passengerID)
+);
+```
+👉 **[Full Schema Script](./createTables.sql)**
+
+### **Data Insertion Methods**
+Data was inserted using three different methods:
+1. **Manual SQL Inserts** - Directly adding data via SQL scripts.
+   - 👉 **[Insert Script](./insertTables.sql)**
+2. **Data Import from CSV** - Using external files for batch inserts.
+   - 👉 **[Data Import Files](./DataImportFiles/)**
+3. **Automated Script (Python)** - Generating inserts dynamically.
+   - 👉 **[Python Script](./Programming/data_generator.py)**
+
+Each table contains at least **400 records** to ensure a realistic dataset.
+
+### **Querying Data**
+A script was created to retrieve all data from the tables:
+- 👉 **[Select Queries](./selectAll.sql)**
+
+Example query:
+```sql
+SELECT * FROM Passenger;
+```
+
+---
+
+## 4. Backup and Restoration
+To ensure data integrity, a full backup of the database was created and tested for restoration.
+- **Backup File:** 👉 **[Database Backup](./backup_YYYYMMDD.sql)**
+- **Restoration Process:** Successfully tested on a different system to verify correctness.
+
+---
+
+## 5. Conclusion
+This phase covered the full database design and implementation, ensuring:
+- A normalized database structure
+- Efficient data handling
+- Secure backup and recovery procedures
+
+Future steps include optimizing queries, adding advanced indexing, and integrating stored procedures.
+
+---
+
+## Submission
+All required files are included in the **DBProject** repository under the "Phase A" folder.
