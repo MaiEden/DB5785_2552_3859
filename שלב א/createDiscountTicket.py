@@ -37,13 +37,13 @@ for _ in range(400):
     # תאריך סיום - חייב להיות אחרי תאריך ההתחלה
     expiration = generate_random_date(start, end_date)
 
-    # הוסף את המידע לשורה
-    data.append((discount_id, ticket_id, start.strftime("%Y-%m-%d"), expiration.strftime("%Y-%m-%d")))
+    # הוסף את המידע לשורה, הפורמט יהיה YYYY-MM-DD
+    data.append((expiration.strftime("%Y-%m-%d"), start.strftime("%Y-%m-%d"), discount_id, ticket_id))
 
 # כתיבה לקובץ CSV
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(["discountID", "ticketID", "startDate", "expirationDate"])  # כותרות
+    writer.writerow(["expirationDate", "startDate", "discountID", "ticketID"])  # כותרות
     writer.writerows(data)
 
 print(f"יצרתי את קובץ ה-CSV בשם {filename} עם 400 שורות של מידע.")
