@@ -6,7 +6,7 @@ ORDER BY passengerid ASC
 SELECT * FROM public.disability
 ORDER BY disabilitytype ASC 
 
---Show all rows in discount
+--Show all rows in discount 
 SELECT * FROM public.discount
 ORDER BY discountid ASC 
 
