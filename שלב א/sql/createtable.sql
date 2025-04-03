@@ -12,10 +12,10 @@ CREATE TABLE Discount (
   PRIMARY KEY (discountID)
 );
 
-CREATE TABLE blocked_passenger (
+CREATE TABLE BlockedPassenger (
   reason VARCHAR(255) NOT NULL,
   blockedDate DATE NOT NULL,
-  unblockDate DATE NOT NULL,
+  unblockDate DATE,
   passengerID INT NOT NULL,
   PRIMARY KEY (passengerID),
   FOREIGN KEY (passengerID) REFERENCES Passenger(passengerID)
@@ -40,7 +40,7 @@ CREATE TABLE Seat (
   FOREIGN KEY (tripID) REFERENCES Trip(tripID)
 );
 
-CREATE TABLE SpecialNeed_passenger (
+CREATE TABLE SpecialNeedPassenger (
   hasAssistAnimal BOOLEAN NOT NULL,
   ContactPhone VARCHAR(11) NOT NULL,
   passengerID INT NOT NULL,
