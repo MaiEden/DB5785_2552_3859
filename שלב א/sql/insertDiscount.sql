@@ -395,6 +395,3 @@ insert into Discount (discountID, discountCode, percentage) values (394, '7Jwp',
 insert into Discount (discountID, discountCode, percentage) values (395, 'aT5hZ', 85);
 insert into Discount (discountID, discountCode, percentage) values (396, 'c7LK', 85);
 insert into Discount (discountID, discountCode, percentage) values (397, 'zM0xN', 30);
-insert into Discount (discountID, discountCode, percentage) values (398, 'mY0tW', 10);
-insert into Discount (discountID, discountCode, percentage) values (399, 'm#YkL', 55);
-insert into Discount (discountID, discountCode, percentage) values (400, 'T7rK8', 40);
