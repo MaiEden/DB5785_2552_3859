@@ -1,7 +1,7 @@
 # Database Project - Stage A
 ## Table of Contents
 
-- [Introduction](#introduction)
+- [Introduction](#1-introduction)
 - [Database Design](#database-design)
   - [ERD Diagram](#erd-diagram)
   - [DSD Schema](#dsd-schema)
@@ -11,7 +11,7 @@
   - [Data Insertion Methods](#data-insertion-methods)
   - [Querying Data](#querying-data)
 - [Backup and Restoration](#backup-and-restoration)
-- [Conclusion](#conclusion)
+- [Conclusion](#5-conclusion)
 ---
 
 ## 1. Introduction
@@ -172,7 +172,7 @@ The following table contains sample passenger data.
 | 293856512   | Prissie Haquin         | phaquin4@sun.com             |
 | **...**     | **...**                 | **...**                      |
 
-   - 👉 **[csv file of passenger here](./שלב%20א/csv/passenger.csv)**
+   - 👉 **[csv file of passenger here](./שלב%20א/csv/Passenger.csv)**
 3. **Automated Script (Python)** - We generated and insert data using python script.
      
      One code file for creating the data using python:
@@ -270,4 +270,6 @@ This phase covered the full database design and implementation, ensuring:
 - A normalized database structure
 - Efficient data handling
 - Secure backup and recovery procedures
+
+(All files relevent for this stage are in `שלב א`)
 
