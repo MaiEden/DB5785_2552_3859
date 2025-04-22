@@ -112,6 +112,9 @@ The Entity-Relationship Diagram (ERD) was designed using ERDPlus and represents 
 
 ![ERD Diagram](./שלב%20א/images/erd/erd.png)
 
+> **Note:** We initially planned to use the combination of `seatNumber` and `tripId` as the primary key for the **Seat** schema. However, for the sake of efficiency and simplicity, we decided to create a separate `seatId` as the primary key.  Still, we ensure that the combination of `seatNumber` and `tripId` remains unique.
+
+
 ### **DSD Schema**
 After validating the ERD, we generated the Data Structure Diagram (DSD) to confirm that relationships and constraints were correctly defined.
 
