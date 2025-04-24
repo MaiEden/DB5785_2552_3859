@@ -327,23 +327,32 @@ HAVING COUNT(*) = (
 #### Query output:
 ![hgv](./שלב%20ב/images/Table1Sreenshot.png)
 
-#### Query output:
-![hgv](./שלב%20ב/images/Table5Sreenshot.png)
+### 2. Blocked Passengers Who Purchased Tickets During Their Block Period
+#### Motivation:
+The legal department received reports of blocked passengers being charged or able to buy tickets despite restrictions. This raised concerns about enforcement failures or system flaws in the blocking mechanism. The query helps identify passengers who managed to purchase tickets during their block period—potentially revealing authorization issues or legal risks.
 
-#### Query output:
-![hgv](./שלב%20ב/images/Table3Sreenshot.png)
+#### What the Query Does:
+Finds passengers who were blocked and still purchased at least one ticket during their block period. Returns the passenger ID, full name, and the number of tickets purchased while blocked.
 
+```sql
+-- Identify blocked passengers who bought tickets during their block period
+-- Returns passenger ID, full name, and number of tickets purchased
+SELECT sub.passengerid, sub.fullname, sub.number_of_ticket_purchased
+FROM (
+    SELECT p.passengerid, p.fullname,
+        COUNT(*) AS number_of_ticket_purchased
+    FROM passenger p
+    NATURAL JOIN blockedpassenger b
+    NATURAL JOIN ticket t
+    WHERE 
+        t.purchasedate >= b.blockeddate 
+        AND (b.unblockdate IS NULL OR t.purchasedate <= b.unblockdate)
+    GROUP BY p.passengerid, p.fullname
+) AS sub
+WHERE sub.number_of_ticket_purchased >= 1;
+```
 #### Query output:
-![hgv](./שלב%20ב/images/Table4Sreenshot.png)
-
-#### Query output:
-![hgv](./שלב%20ב/images/Table6Sreenshot.png)
-
-#### Query output:
-![hgv](./שלב%20ב/images/Table7Sreenshot.png)
-
-#### Query output:
-![hgv](./שלב%20ב/images/Table8Sreenshot.png)
+![hgv](./שלב%20ב/images/Table2Sreenshot.png)
 
 ### 3. Identifying Trips with Special Needs Passengers During High-Demand Period
 #### Motivation:
@@ -361,6 +370,8 @@ WHERE
   AND t.purchaseDate BETWEEN DATE '2024-07-01' AND DATE '2024-09-01'
 GROUP BY s.tripID;
 ```
+#### Query output:
+![hgv](./שלב%20ב/images/Table3Sreenshot.png)
 
 ### 4. Identifying Premium Passengers Based on Average Spending
 
@@ -385,6 +396,8 @@ HAVING AVG(t.price) > (
 )
 ORDER BY avg_price_per_passenger DESC;
 ```
+#### Query output:
+![hgv](./שלב%20ב/images/Table4Sreenshot.png)
 
 ### 5. Seat Occupancy Rate per Trip
 #### Motivation:
@@ -398,6 +411,9 @@ FROM Seat
 WHERE isAvailable = FALSE
 GROUP BY tripID;
 ```
+#### Query output:
+![hgv](./שלב%20ב/images/Table5Sreenshot.png)
+
 
 ### 6. Identifying Passengers on a Specific Trip  
 #### Motivation:  
@@ -420,3 +436,42 @@ WHERE
   tr.tripID = 16
 ORDER BY t.purchaseDate;
 ```
+#### Query output:
+![hgv](./שלב%20ב/images/Table6Sreenshot.png)
+
+
+### 7. Top 5 Most Popular Seats  
+#### Motivation:  
+Understanding which seats are booked most often can reveal passenger preferences and guide decisions on layout optimization or special seat promotions.
+
+#### What the Query Does:  
+Finds the five seats with the highest number of ticket bookings.
+
+```sql
+SELECT s.seatNumber, COUNT(t.ticketID) AS ticketCount
+FROM Ticket t
+JOIN Seat s ON t.seatID = s.seatID
+WHERE s.isAvailable = FALSE
+GROUP BY s.seatNumber
+ORDER BY ticketCount DESC
+LIMIT 5;
+```
+#### Query output:
+![hgv](./שלב%20ב/images/Table7Sreenshot.png)
+
+
+### 8 Displaying Available Seats for a Specific Trip  
+#### Motivation:  
+Providing real-time seat availability helps improve user experience during the booking process by allowing passengers to choose their preferred seats.
+
+#### What the Query Does:  
+Shows all available seats for trip ID 12.
+
+```sql
+SELECT s.seatNumber
+FROM Seat s
+WHERE s.isAvailable = TRUE AND s.tripID = 12
+ORDER BY s.seatNumber;
+```
+#### Query output:
+![hgv](./שלב%20ב/images/Table8Sreenshot.png)
