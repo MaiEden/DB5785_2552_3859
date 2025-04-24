@@ -306,13 +306,9 @@ This phase covered the full database design and implementation, ensuring:
 #### Motivation:
 The marketing team requested an analysis to identify tickets that received an unusually high number of discounts. This insight is critical for detecting potential misuse of discount codes, system glitches in coupon assignment, or overly permissive discount stacking rules. The goal is to evaluate whether stricter policies should be implemented to prevent abuse and ensure fair usage.
 
-SQL Query:
-
-sql
-Copy
-Edit
--- Find tickets that received the highest number of discounts,
--- including the number of discounts and the passenger ID who purchased the ticket
+#### What the Query Does:
+This query finds the tickets that received the most discounts. For each such ticket, it shows how many discounts were applied and the ID of the passenger who bought it.
+```sql
 SELECT dt.ticketID, t.passengerID,
   COUNT(*) AS discount_count
 FROM discountTicket dt NATURAL JOIN Ticket t
@@ -325,4 +321,4 @@ HAVING COUNT(*) = (
         FROM discountTicket
         GROUP BY ticketID
     ) AS counts
-);
+```
