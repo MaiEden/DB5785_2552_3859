@@ -308,6 +308,7 @@ The marketing team requested an analysis to identify tickets that received an un
 
 #### What the Query Does:
 This query finds the tickets that received the most discounts. For each such ticket, it shows how many discounts were applied and the ID of the passenger who bought it.
+
 ```sql
 SELECT dt.ticketID, t.passengerID,
   COUNT(*) AS discount_count
@@ -322,8 +323,27 @@ HAVING COUNT(*) = (
         GROUP BY ticketID
     ) AS counts
 ```
+
 #### Query output:
-![hgv](./שלב%20ב/images/Table1Screenshot.png)
+![hgv](./שלב%20ב/images/Table1Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table5Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table3Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table4Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table6Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table7Sreenshot.png)
+
+#### Query output:
+![hgv](./שלב%20ב/images/Table8Sreenshot.png)
 
 ### 3. Identifying Trips with Special Needs Passengers During High-Demand Period
 #### Motivation:
@@ -331,6 +351,7 @@ During the period from July 1 to September 1, 2024, there is an increase in publ
 
 #### What the Query Does:
 This SQL query identifies all trips that include passengers with special needs who purchased tickets between July 1 and September 1, 2024. It returns the trip ID and the count of special needs passengers per trip.
+
 ```sql
 SELECT s.tripID, COUNT(*) AS special_needs_count
 FROM Seat s
@@ -340,6 +361,7 @@ WHERE
   AND t.purchaseDate BETWEEN DATE '2024-07-01' AND DATE '2024-09-01'
 GROUP BY s.tripID;
 ```
+
 ### 4. Identifying Premium Passengers Based on Average Spending
 
 #### Motivation:
@@ -364,12 +386,12 @@ HAVING AVG(t.price) > (
 ORDER BY avg_price_per_passenger DESC;
 ```
 
-
 ### 5. Seat Occupancy Rate per Trip
 #### Motivation:
 To improve operational efficiency, the transport team needs visibility into seat usage across trips. This helps identify under- or over-utilized routes, guiding decisions on whether to add or reduce service. The query provides occupancy data to support resource optimization.
 #### What the Query Does:
 Calculates the seat occupancy rate per trip by checking how many seats are marked as unavailable. Assumes each trip has 50 seats.
+
 ```sql
 SELECT tripID, ROUND(100.0 * COUNT(seatID) / 50, 2) AS precent, COUNT(seatID) AS occupied_seats
 FROM Seat
@@ -398,4 +420,3 @@ WHERE
   tr.tripID = 16
 ORDER BY t.purchaseDate;
 ```
-
