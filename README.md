@@ -302,7 +302,7 @@ This phase covered the full database design and implementation, ensuring:
 - [Conclusion](#5-conclusion)
 
 ## Queries
-### Detecting Tickets with the Highest Number of Discounts
+### 1. Detecting Tickets with the Highest Number of Discounts
 #### Motivation:
 The marketing team requested an analysis to identify tickets that received an unusually high number of discounts. This insight is critical for detecting potential misuse of discount codes, system glitches in coupon assignment, or overly permissive discount stacking rules. The goal is to evaluate whether stricter policies should be implemented to prevent abuse and ensure fair usage.
 
@@ -322,3 +322,78 @@ HAVING COUNT(*) = (
         GROUP BY ticketID
     ) AS counts
 ```
+
+### 3. Identifying Trips with Special Needs Passengers During High-Demand Period
+#### Motivation:
+During the period from July 1 to September 1, 2024, there is an increase in public transportation demand, especially due to summer vacation. To ensure a safe and accessible travel experience for passengers with special needs, the operations team needs to assess how many such passengers have booked tickets during this time period. The goal is to verify that adequate accessibility equipment (such as lifts and dedicated seating) is available, prepare additional staff at relevant stations, and monitor the allocation of accessible resources. This query supports the transport operations team’s preparation for the high-demand season by identifying trips with special needs passengers and the number of such passengers on each trip.
+
+#### What the Query Does:
+This SQL query identifies all trips that include passengers with special needs who purchased tickets between July 1 and September 1, 2024. It returns the trip ID and the count of special needs passengers per trip.
+```sql
+SELECT s.tripID, COUNT(*) AS special_needs_count
+FROM Seat s
+JOIN Ticket t ON s.seatID = t.seatID
+WHERE 
+  t.passengerID IN (SELECT passengerID FROM SpecialNeedPassenger)
+  AND t.purchaseDate BETWEEN DATE '2024-07-01' AND DATE '2024-09-01'
+GROUP BY s.tripID;
+```
+### 4. Identifying Premium Passengers Based on Average Spending
+
+#### Motivation:
+The sales and customer success teams aim to identify high-value (premium) passengers who consistently spend more than the average. By isolating these customers, the company can design targeted loyalty programs, premium service tiers, or exclusive promotions that enhance customer retention and satisfaction.
+
+#### What the Query Does:
+Finds passengers whose average ticket price is above the overall average, sorted by highest spenders first.
+
+```sql
+SELECT 
+  p.fullName,
+  p.email,
+  ROUND(AVG(t.price), 2) AS avg_price_per_passenger,
+  (SELECT ROUND(AVG(price), 2) FROM Ticket) AS overall_avg_price
+FROM Ticket t
+JOIN Passenger p ON t.passengerID = p.passengerID
+GROUP BY p.passengerID, p.fullName, p.email
+HAVING AVG(t.price) > (
+  SELECT AVG(price)
+  FROM Ticket
+)
+ORDER BY avg_price_per_passenger DESC;
+```
+
+
+### 5. Seat Occupancy Rate per Trip
+#### Motivation:
+To improve operational efficiency, the transport team needs visibility into seat usage across trips. This helps identify under- or over-utilized routes, guiding decisions on whether to add or reduce service. The query provides occupancy data to support resource optimization.
+#### What the Query Does:
+Calculates the seat occupancy rate per trip by checking how many seats are marked as unavailable. Assumes each trip has 50 seats.
+```sql
+SELECT tripID, ROUND(100.0 * COUNT(seatID) / 50, 2) AS precent, COUNT(seatID) AS occupied_seats
+FROM Seat
+WHERE isAvailable = FALSE
+GROUP BY tripID;
+```
+
+### 6. Identifying Passengers on a Specific Trip  
+#### Motivation:  
+Security or operational staff may need to quickly identify all passengers on a specific trip, such as Trip 16, for auditing, investigation, or safety purposes.
+
+#### What the Query Does:  
+Lists the full name, email, trip ID, and seat number of all passengers on Trip 16, ordered by ticket purchase date.
+
+```sql
+SELECT 
+  p.fullName, 
+  p.email, 
+  s.tripID, 
+  s.seatNumber
+FROM Passenger p
+JOIN Ticket t ON p.passengerID = t.passengerID
+JOIN Seat s ON t.seatID = s.seatID
+JOIN Trip tr ON s.tripID = tr.tripID
+WHERE 
+  tr.tripID = 16
+ORDER BY t.purchaseDate;
+```
+
