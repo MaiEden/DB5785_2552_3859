@@ -322,6 +322,8 @@ HAVING COUNT(*) = (
         GROUP BY ticketID
     ) AS counts
 ```
+#### Query output:
+![hgv](./שלב%20ב/images/Table1Screenshot.png)
 
 ### 3. Identifying Trips with Special Needs Passengers During High-Demand Period
 #### Motivation:
