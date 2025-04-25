@@ -592,6 +592,9 @@ JOIN (
 ) AS leastUsed ON dt.discountID = leastUsed.discountID
 SET dt.expirationDate = DATE_ADD(CURDATE(), INTERVAL 60 DAY);
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
 
 ### 2. Mark Seats as Unavailable for Past Trips  
 #### Motivation:  
@@ -602,16 +605,22 @@ This query updates the `Seat` table by setting `isAvailable` to `FALSE` for seat
 
 ```sql
 UPDATE Seat
-SET isAvailable = FALSE
+SET "isavailable" = FALSE
 WHERE seatID IN (
     SELECT s.seatID
     FROM Seat s
     JOIN Ticket t ON t.seatID = s.seatID
     WHERE 
-        YEAR(t.purchaseDate) < YEAR(CURDATE()) OR
-        (YEAR(t.purchaseDate) = YEAR(CURDATE()) AND MONTH(t.purchaseDate) < MONTH(CURDATE()))
+        (EXTRACT(YEAR FROM t.purchaseDate) < EXTRACT(YEAR FROM CURRENT_DATE)
+        OR (
+            EXTRACT(YEAR FROM t.purchaseDate) = EXTRACT(YEAR FROM CURRENT_DATE)
+            AND EXTRACT(MONTH FROM t.purchaseDate) < EXTRACT(MONTH FROM CURRENT_DATE)
+        ))   AND S.isAvailable = True
 );
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
 
 ### 3. Automatically Unblock Long-Blocked Passengers Due to Payment Issues  
 #### Motivation:  
@@ -626,6 +635,9 @@ SET unblockDate = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
 WHERE reason = 'Payment issues'
   AND unblockDate IS NULL
   AND blockedDate <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
-
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
+
 ## Constraints
