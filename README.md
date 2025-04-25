@@ -500,9 +500,16 @@ commit;
 ```
 The table before delete query (with START TRANSACTION):
 
-In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
+![BeforeDeleteSreenshot1](./שלב%20ב/images/BeforeDeleteSreenshot1.png)
+
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to 
+the data before deletion:
+
+![ViewRowsToDeleteSreenshot1](./שלב%20ב/images/ViewRowsToDeleteSreenshot1.png)
 
 The table after delete query and commit:
+
+![AfterDeleteSreenshot1](./שלב%20ב/images/AfterDeleteSreenshot1.png)
 
 As we can see there are five less lines and John Cohen was deleted.
 
@@ -523,7 +530,11 @@ WHERE discountID NOT IN (
 ```
 The table before delete query:
 
+![BeforeDeleteSreenshot2](./שלב%20ב/images/BeforeDeleteSreenshot2.png)
+
 The table after delete query:
+
+![AfterDeleteSreenshot2](./שלב%20ב/images/AfterDeleteSreenshot2.png)
 
 ### 3. Removing High Discounts from Popular Tickets  
 #### Motivation:  
@@ -547,10 +558,20 @@ rollback;
 ```
 The table before delete query (with START TRANSACTION):
 
+![BeforeDeleteSreenshot3](./שלב%20ב/images/BeforeDeleteSreenshot3.png)
+
 In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
 
+![ViewRowsToDeleteSreenshot3](./שלב%20ב/images/ViewRowsToDeleteSreenshot3.png)
+
 The table after delete query before rollback:
+
+![AfterDeleteSreenshot3](./שלב%20ב/images/AfterDeleteSreenshot3.png)
+
 The table after delete query after rollback:
+
+![afterRollback](./שלב%20ב/images/BeforeDeleteSreenshot3.png)
+
 
 ## Update queries
 ### 1. Extending Expiration for Least-Used Expired Discounts  
@@ -571,6 +592,9 @@ JOIN (
 ) AS leastUsed ON dt.discountID = leastUsed.discountID
 SET dt.expirationDate = DATE_ADD(CURDATE(), INTERVAL 60 DAY);
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
 
 ### 2. Mark Seats as Unavailable for Past Trips  
 #### Motivation:  
@@ -581,16 +605,22 @@ This query updates the `Seat` table by setting `isAvailable` to `FALSE` for seat
 
 ```sql
 UPDATE Seat
-SET isAvailable = FALSE
+SET "isavailable" = FALSE
 WHERE seatID IN (
     SELECT s.seatID
     FROM Seat s
     JOIN Ticket t ON t.seatID = s.seatID
     WHERE 
-        YEAR(t.purchaseDate) < YEAR(CURDATE()) OR
-        (YEAR(t.purchaseDate) = YEAR(CURDATE()) AND MONTH(t.purchaseDate) < MONTH(CURDATE()))
+        (EXTRACT(YEAR FROM t.purchaseDate) < EXTRACT(YEAR FROM CURRENT_DATE)
+        OR (
+            EXTRACT(YEAR FROM t.purchaseDate) = EXTRACT(YEAR FROM CURRENT_DATE)
+            AND EXTRACT(MONTH FROM t.purchaseDate) < EXTRACT(MONTH FROM CURRENT_DATE)
+        ))   AND S.isAvailable = True
 );
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
 
 ### 3. Automatically Unblock Long-Blocked Passengers Due to Payment Issues  
 #### Motivation:  
@@ -605,6 +635,9 @@ SET unblockDate = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
 WHERE reason = 'Payment issues'
   AND unblockDate IS NULL
   AND blockedDate <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
-
 ```
+The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+
+The table after update query:
+
 ## Constraints
