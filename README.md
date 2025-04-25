@@ -289,17 +289,10 @@ This phase covered the full database design and implementation, ensuring:
 # Stage B
 ## Table of Contents
 
-- [Introduction](#1-introduction)
-- [Database Design](#2-database-design)
-  - [ERD Diagram](#erd-diagram)
-  - [DSD Schema](#dsd-schema)
-  - [Normalization](#normalization)
-- [Database Implementation](#3-database-implementation)
-  - [Creating Tables](#creating-tables)
-  - [Data Insertion Methods](#data-insertion-methods)
-  - [Querying Data](#querying-data)
-- [Backup and Restoration](#4-backup-and-restoration)
-- [Conclusion](#5-conclusion)
+- [Queries](#queries)
+- [Delete queries](#delete-queries)
+- [Update queries](#update-queries)
+- [Constraints](#constraints)
 
 ## Queries
 ### 1. Detecting Tickets with the Highest Number of Discounts
