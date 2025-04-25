@@ -460,7 +460,7 @@ LIMIT 5;
 ![hgv](./שלב%20ב/images/Table7Sreenshot.png)
 
 
-### 8 Displaying Available Seats for a Specific Trip  
+### 8. Displaying Available Seats for a Specific Trip  
 #### Motivation:  
 Providing real-time seat availability helps improve user experience during the booking process by allowing passengers to choose their preferred seats.
 
@@ -475,3 +475,136 @@ ORDER BY s.seatNumber;
 ```
 #### Query output:
 ![hgv](./שלב%20ב/images/Table8Sreenshot.png)
+
+## Delete queries
+### 1. Cleaning Up Inactive Passengers  
+#### Motivation:  
+The system retains data on passengers who haven't purchased tickets since before 2020 or never purchased at all. To reduce database clutter and improve performance, we need to remove these inactive users.
+
+#### What the Query Does:  
+Deletes passengers whose last ticket purchase was before 2020 or who never purchased any tickets.
+
+```sql
+START TRANSACTION;
+
+DELETE FROM Passenger
+WHERE passengerID IN (
+  SELECT p.passengerID
+  FROM Passenger p
+  LEFT JOIN Ticket t ON p.passengerID = t.passengerID
+  GROUP BY p.passengerID
+  HAVING MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
+);
+
+commit;
+```
+The table before delete query (with START TRANSACTION):
+
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
+
+The table after delete query and commit:
+
+As we can see there are five less lines and John Cohen was deleted.
+
+### 2. Cleaning Up Expired and Unused Discounts  
+#### Motivation:  
+Many discounts in the system haven’t been used in over five years. To focus on active and relevant deals, unused and expired discounts are removed.
+
+#### What the Query Does:  
+Deletes discounts not used in the past five years by checking their absence in the `discountTicket` table.
+
+```sql
+DELETE FROM Discount
+WHERE discountID NOT IN (
+    SELECT DISTINCT discountID
+    FROM discountTicket
+    WHERE expirationDate >= CURRENT_DATE - INTERVAL '5 year'
+);
+```
+The table before delete query:
+
+The table after delete query:
+
+### 3. Removing High Discounts from Popular Tickets  
+#### Motivation:  
+Some tickets are popular and don’t need large discounts to sell well. To protect revenue, deep discounts on these tickets are removed.
+
+#### What the Query Does:  
+Deletes discount entries over 40% for a specific popular ticket.
+
+```sql
+START TRANSACTION;
+
+DELETE FROM discountTicket
+WHERE ticketID = 47
+  AND discountID IN (
+    SELECT discountID
+    FROM Discount
+    WHERE percentage > 40
+);
+
+rollback;
+```
+The table before delete query (with START TRANSACTION):
+
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
+
+The table after delete query before rollback:
+The table after delete query after rollback:
+
+## Update queries
+### 1. Extending Expiration for Least-Used Expired Discounts  
+#### Motivation:  
+Marketing aims to re-engage passengers by extending the expiration of the five least-used discounts that recently expired. This gives these underutilized discounts a second chance, potentially increasing ticket sales by offering them again to passengers who may have missed them or abandoned their bookings previously. The idea is to evaluate if extending their availability encourages more ticket purchases.
+#### What the Query Does:  
+Updates expiration dates for the 5 least-used discounts that expired in the past 7 days.
+```sql
+UPDATE discountTicket dt
+JOIN (
+    SELECT dt.discountID
+    FROM discountTicket dt
+    WHERE 
+        dt.expirationDate BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()
+    GROUP BY dt.discountID
+    ORDER BY COUNT(dt.ticketID) ASC
+    LIMIT 5
+) AS leastUsed ON dt.discountID = leastUsed.discountID
+SET dt.expirationDate = DATE_ADD(CURDATE(), INTERVAL 60 DAY);
+```
+
+### 2. Mark Seats as Unavailable for Past Trips  
+#### Motivation:  
+In the bus booking system, we need to ensure that seats from past trips don’t appear as available for booking. This query helps maintain accurate seat availability by automatically marking seats as unavailable if the associated ticket purchase date is from a past month or year. This prevents users from mistakenly seeing expired trip seats as available.
+
+#### What the Query Does:  
+This query updates the `Seat` table by setting `isAvailable` to `FALSE` for seats associated with tickets purchased in a past month or year.
+
+```sql
+UPDATE Seat
+SET isAvailable = FALSE
+WHERE seatID IN (
+    SELECT s.seatID
+    FROM Seat s
+    JOIN Ticket t ON t.seatID = s.seatID
+    WHERE 
+        YEAR(t.purchaseDate) < YEAR(CURDATE()) OR
+        (YEAR(t.purchaseDate) = YEAR(CURDATE()) AND MONTH(t.purchaseDate) < MONTH(CURDATE()))
+);
+```
+
+### 3. Automatically Unblock Long-Blocked Passengers Due to Payment Issues  
+#### Motivation:  
+To prevent indefinite blocking of users due to unresolved payment issues, the system should reassess cases that have been inactive for over 6 months. This query helps initiate reactivation by scheduling an unblock date one month from today, aiding customer support in resolving long-term blocks and encouraging passenger re-engagement.
+
+#### What the Query Does:  
+It updates the `unblockDate` to one month from today for passengers blocked over 6 months ago due to payment issues and who have not yet been assigned an unblock date.
+
+```sql
+UPDATE BlockedPassenger
+SET unblockDate = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+WHERE reason = 'Payment issues'
+  AND unblockDate IS NULL
+  AND blockedDate <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
+
+```
+## Constraints
