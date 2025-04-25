@@ -495,6 +495,11 @@ WHERE passengerID IN (
      OR MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
 );
 ```
+> In order to view the rows being deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion.
+
+Before delete query:
+
+After delete query:
 
 ### 2. Cleaning Up Expired and Unused Discounts  
 #### Motivation:  
