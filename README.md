@@ -641,3 +641,52 @@ The table before update query (In order to view all rows that will be updte, we 
 The table after update query:
 
 ## Constraints
+### 1. Enforcing Logical Range for Discount Percentages  
+#### Motivation:  
+The system allows discounts on ticket prices, but without constraints, there's a risk of unrealistic discount values—like negative percentages or values over 100%. Such cases could lead to negative prices or price increases instead of reductions. This constraint ensures all discounts remain within logical business limits, protecting pricing integrity and invoice accuracy.
+
+#### What the Query Does:  
+It adds a check constraint to the `Discount` table to ensure the discount percentage is between 0 and 100, inclusive.
+
+```sql
+ALTER TABLE Discount
+ADD CONSTRAINT chk_percentage_range CHECK (percentage >= 0 AND percentage <= 100);
+```
+
+### 2. Validating Email Format for Passengers  
+#### Motivation:  
+To ensure reliable communication and reduce errors, email addresses stored in the system must follow a valid structure. This helps prevent issues with notification delivery and account verification.
+
+#### What the Query Does:  
+Adds a constraint to the `Passenger` table that enforces a proper email format using a regular expression.
+
+```sql
+ALTER TABLE Passenger
+ADD CONSTRAINT chk_valid_email
+CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+```
+
+### 3. Enforcing Unique Seat Numbers Per Trip  
+#### Motivation:  
+To ensure data consistency and avoid confusion during seat selection, each seat number must be unique within a single trip. This prevents situations where two passengers could be assigned the same seat number on the same trip.
+
+#### What the Query Does:  
+Adds a unique constraint to guarantee that the combination of `tripID` and `seatNumber` is unique across the `Seat` table.
+
+```sql
+ALTER TABLE Seat
+ADD CONSTRAINT unique_seat_per_trip
+UNIQUE (tripID, seatNumber);
+```
+
+### 4. Enforcing Mandatory Ticket Price  
+#### Motivation:  
+To maintain pricing integrity and prevent incomplete records, every ticket must have a price. Allowing `NULL` prices could result in billing issues or inconsistencies in financial reports.
+
+#### What the Query Does:  
+Modifies the `Ticket` table to ensure that every entry has a non-null value for the `price` field.
+
+```sql
+ALTER TABLE Ticket
+ALTER COLUMN price SET NOT NULL;
+```
