@@ -592,9 +592,14 @@ JOIN (
 ) AS leastUsed ON dt.discountID = leastUsed.discountID
 SET dt.expirationDate = DATE_ADD(CURDATE(), INTERVAL 60 DAY);
 ```
-The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
+
+![BeforeUpdating1](./שלב%20ב/images/BeforeUpdating1.png)
 
 The table after update query:
+
+![AfterUpdating1](./שלב%20ב/images/AfterUpdating1.png)
+
 
 ### 2. Mark Seats as Unavailable for Past Trips  
 #### Motivation:  
@@ -618,9 +623,13 @@ WHERE seatID IN (
         ))   AND S.isAvailable = True
 );
 ```
-The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
+
+![BeforeUpdating2](./שלב%20ב/images/BeforeUpdating2.png)
 
 The table after update query:
+
+![AfterUpdating2](./שלב%20ב/images/AfterUpdating2.png)
 
 ### 3. Automatically Unblock Long-Blocked Passengers Due to Payment Issues  
 #### Motivation:  
@@ -636,9 +645,13 @@ WHERE reason = 'Payment issues'
   AND unblockDate IS NULL
   AND blockedDate <= CURRENT_DATE - INTERVAL '6 months';
 ```
-The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
+The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
+
+![BeforeUpdating3](./שלב%20ב/images/BeforeUpdating3.png)
 
 The table after update query:
+
+![AfterUpdating3](./שלב%20ב/images/AfterUpdating3.png)
 
 ## Constraints
 ### 1. Enforcing Logical Range for Discount Percentages  
