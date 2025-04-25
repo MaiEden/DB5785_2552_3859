@@ -665,6 +665,9 @@ It adds a check constraint to the `Discount` table to ensure the discount percen
 ALTER TABLE Discount
 ADD CONSTRAINT chk_percentage_range CHECK (percentage >= 0 AND percentage <= 100);
 ```
+Try to insert wrong valus:
+
+![wrongInsert1](./שלב%20ב/images/wrongInsert1.png)
 
 ### 2. Validating Email Format for Passengers  
 #### Motivation:  
@@ -679,6 +682,10 @@ ADD CONSTRAINT chk_valid_email
 CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 ```
 
+Try to insert wrong valus:
+
+![wrongInsert4](./שלב%20ב/images/wrongInsert4.png)
+
 ### 3. Enforcing Unique Seat Numbers Per Trip  
 #### Motivation:  
 To ensure data consistency and avoid confusion during seat selection, each seat number must be unique within a single trip. This prevents situations where two passengers could be assigned the same seat number on the same trip.
@@ -691,6 +698,9 @@ ALTER TABLE Seat
 ADD CONSTRAINT unique_seat_per_trip
 UNIQUE (tripID, seatNumber);
 ```
+Try to insert wrong valus:
+
+![wrongInsert3](./שלב%20ב/images/wrongInsert3.png)
 
 ### 4. Enforcing Mandatory Ticket Price  
 #### Motivation:  
@@ -703,3 +713,6 @@ Modifies the `Ticket` table to ensure that every entry has a non-null value for 
 ALTER TABLE Ticket
 ALTER COLUMN price SET NOT NULL;
 ```
+Try to insert wrong valus:
+
+![wrongInsert2](./שלב%20ב/images/wrongInsert2.png)
