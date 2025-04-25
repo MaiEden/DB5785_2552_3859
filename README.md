@@ -631,10 +631,10 @@ It updates the `unblockDate` to one month from today for passengers blocked over
 
 ```sql
 UPDATE BlockedPassenger
-SET unblockDate = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+SET unblockDate = CURRENT_DATE + INTERVAL '1 month'
 WHERE reason = 'Payment issues'
   AND unblockDate IS NULL
-  AND blockedDate <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
+  AND blockedDate <= CURRENT_DATE - INTERVAL '6 months';
 ```
 The table before update query (In order to view all rows that will be updte, we replaced `DELETE` with `SELECT * FROM` to preview the data before updating):
 
