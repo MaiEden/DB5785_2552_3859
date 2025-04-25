@@ -499,11 +499,12 @@ WHERE passengerID IN (
 commit;
 ```
 The table before delete query (with START TRANSACTION):
-
-In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
-
+![BeforeDeleteSreenshot1](./שלב%20ב/images/BeforeDeleteSreenshot1.png)
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to 
+the data before deletion:
+![ViewRowsToDeleteSreenshot1](./שלב%20ב/images/ViewRowsToDeleteSreenshot1.png)
 The table after delete query and commit:
-
+![AfterDeleteSreenshot1](./שלב%20ב/images/AfterDeleteSreenshot1.png)
 As we can see there are five less lines and John Cohen was deleted.
 
 ### 2. Cleaning Up Expired and Unused Discounts  
@@ -522,8 +523,9 @@ WHERE discountID NOT IN (
 );
 ```
 The table before delete query:
-
+![BeforeDeleteSreenshot2](./שלב%20ב/images/BeforeDeleteSreenshot2.png)
 The table after delete query:
+![AfterDeleteSreenshot2](./שלב%20ב/images/AfterDeleteSreenshot2.png)
 
 ### 3. Removing High Discounts from Popular Tickets  
 #### Motivation:  
@@ -546,11 +548,14 @@ WHERE ticketID = 47
 rollback;
 ```
 The table before delete query (with START TRANSACTION):
-
+![BeforeDeleteSreenshot3](./שלב%20ב/images/BeforeDeleteSreenshot3.png)
 In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
-
+![ViewRowsToDeleteSreenshot3](./שלב%20ב/images/ViewRowsToDeleteSreenshot3.png)
 The table after delete query before rollback:
+![AfterDeleteSreenshot3](./שלב%20ב/images/AfterDeleteSreenshot3.png)
 The table after delete query after rollback:
+![afterRollback](./שלב%20ב/images/BeforeDeleteSreenshot3.png)
+
 
 ## Update queries
 ### 1. Extending Expiration for Least-Used Expired Discounts  
