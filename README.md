@@ -485,53 +485,73 @@ The system retains data on passengers who haven't purchased tickets since before
 Deletes passengers whose last ticket purchase was before 2020 or who never purchased any tickets.
 
 ```sql
+START TRANSACTION;
+
 DELETE FROM Passenger
 WHERE passengerID IN (
   SELECT p.passengerID
   FROM Passenger p
   LEFT JOIN Ticket t ON p.passengerID = t.passengerID
   GROUP BY p.passengerID
-  HAVING MAX(EXTRACT(YEAR FROM t.purchaseDate)) IS NULL 
-     OR MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
+  HAVING MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
 );
+
+commit;
 ```
-> In order to view the rows being deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion.
+The table before delete query (with START TRANSACTION):
 
-Before delete query:
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
 
-After delete query:
+The table after delete query and commit:
+
+As we can see there are five less lines and John Cohen was deleted.
 
 ### 2. Cleaning Up Expired and Unused Discounts  
 #### Motivation:  
-Many discounts in the system haven’t been used in over a year. To focus on active and relevant deals, unused and expired discounts are removed.
+Many discounts in the system haven’t been used in over five years. To focus on active and relevant deals, unused and expired discounts are removed.
 
 #### What the Query Does:  
-Deletes discounts not used in the past year by checking their absence in the `discountTicket` table.
+Deletes discounts not used in the past five years by checking their absence in the `discountTicket` table.
 
 ```sql
 DELETE FROM Discount
 WHERE discountID NOT IN (
     SELECT DISTINCT discountID
     FROM discountTicket
-    WHERE expirationDate >= CURRENT_DATE - INTERVAL '1 year'
+    WHERE expirationDate >= CURRENT_DATE - INTERVAL '5 year'
 );
 ```
+The table before delete query:
+
+The table after delete query:
+
 ### 3. Removing High Discounts from Popular Tickets  
 #### Motivation:  
 Some tickets are popular and don’t need large discounts to sell well. To protect revenue, deep discounts on these tickets are removed.
 
 #### What the Query Does:  
-Deletes discount entries over 50% for a specific popular ticket.
+Deletes discount entries over 40% for a specific popular ticket.
 
 ```sql
+START TRANSACTION;
+
 DELETE FROM discountTicket
-WHERE ticketID = 123
+WHERE ticketID = 47
   AND discountID IN (
     SELECT discountID
     FROM Discount
-    WHERE percentage > 50
+    WHERE percentage > 40
 );
+
+rollback;
 ```
+The table before delete query (with START TRANSACTION):
+
+In order to view all rows that need to be deleted, we replaced `DELETE` with `SELECT *` to preview the data before deletion:
+
+The table after delete query before rollback:
+The table after delete query after rollback:
+
 ## Update queries
 ### 1. Extending Expiration for Least-Used Expired Discounts  
 #### Motivation:  
