@@ -1,92 +1,118 @@
---set constraint on percentage 
-ALTER TABLE Discount
-ADD CONSTRAINT chk_percentage_range CHECK (percentage >= 0 AND percentage <= 100);
---try wrong insert
-INSERT INTO Discount (discountID, discountCode, percentage)
-VALUES (999, 'INVALID_PERCENT', 150);
+--1
+-- Find tickets that received the highest number of discounts,
+-- including the number of discounts and the passenger ID who purchased the ticket
+SELECT dt.ticketID, t.passengerID,
+  COUNT(*) AS discount_count
+FROM discountTicket dt NATURAL JOIN Ticket t
+GROUP BY 
+	dt.ticketID, t.passengerID
+HAVING COUNT(*) = (
+    	SELECT MAX(discount_count)
+    	FROM (
+      		SELECT COUNT(*) AS discount_count
+      		FROM discountTicket
+      		GROUP BY ticketID
+    	) AS counts);
+
+--2
+-- Identify blocked passengers who bought tickets during their block period
+-- Returns passenger ID, full name, and number of tickets purchased
+SELECT sub.passengerid, sub.fullname, sub.number_of_ticket_purchased
+FROM (
+    SELECT p.passengerid, p.fullname,
+        COUNT(*) AS number_of_ticket_purchased
+    FROM passenger p
+    NATURAL JOIN blockedpassenger b
+    NATURAL JOIN ticket t
+    WHERE 
+        t.purchasedate >= b.blockeddate 
+        AND (b.unblockdate IS NULL OR t.purchasedate <= b.unblockdate)
+    GROUP BY p.passengerid, p.fullname
+) AS sub
+WHERE sub.number_of_ticket_purchased >= 1;
 
 
---set price of Ticket to NOT NULL
-ALTER TABLE Ticket
-ALTER COLUMN price SET NOT NULL;
---try wrong insert
-INSERT INTO Ticket (ticketID, purchaseDate, price, passengerID, seatID)
-VALUES (999, CURRENT_DATE, NULL, 1, 1);
+--3
+--בדיקת טיולים עם נוסעים בעלי צרכים מיוחדים בתקופה לחוצה
+SELECT s.tripID, COUNT(*) AS special_needs_count
+FROM Seat s
+JOIN Ticket t ON s.seatID = t.seatID
+WHERE 
+  t.passengerID IN (SELECT passengerID FROM SpecialNeedPassenger)
+  AND t.purchaseDate BETWEEN DATE '2024-07-01' AND DATE '2024-09-01'
+GROUP BY s.tripID;
 
-ALTER TABLE Seat
-ADD CONSTRAINT unique_seat_per_trip
-UNIQUE (tripID, seatNumber);
---try wrong insert
-INSERT INTO Seat (seatID, seatNumber, isAvailable, tripID)
-VALUES (999, 11, TRUE, 1);
+--4
+--מציאת לקוחות פרימיום
+SELECT 
+  p.fullName,
+  p.email,
+  ROUND(AVG(t.price), 2) AS avg_price_per_passenger,
+  (SELECT ROUND(AVG(price), 2) FROM Ticket) AS overall_avg_price
+FROM Ticket t
+JOIN Passenger p ON t.passengerID = p.passengerID
+GROUP BY p.passengerID, p.fullName, p.email
+HAVING AVG(t.price) >= (
+  SELECT AVG(price)
+  FROM Ticket
+) * 1.7
+ORDER BY avg_price_per_passenger DESC;
 
---check that all emails are valid
-ALTER TABLE Passenger
-ADD CONSTRAINT chk_valid_email
-CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
---try wrong insert
-INSERT INTO Passenger (passengerID, fullName, email)
-VALUES (999, 'Fake Name', 'not-an-email');
+--5
+-- תפוסת מושבים לכל נסיעה (Occupancy Rate per Trip)
 
---add delete on casecade
-ALTER TABLE BlockedPassenger
-DROP CONSTRAINT blocked_passenger_passengerid_fkey;
+SELECT tripID, ROUND(100.0 * COUNT(seatID) / 50, 2) AS precent , COUNT(seatID) as occupied_seats
+FROM Seat
+WHERE isAvailable = FALSE
+GROUP BY tripID
 
-ALTER TABLE BlockedPassenger
-ADD CONSTRAINT fk_blocked_passenger
-FOREIGN KEY (passengerID)
-REFERENCES Passenger(passengerID)
-ON DELETE CASCADE;
+--6
+--מציאת מחבל בנסיעה מספר 16
+SELECT 
+  p.fullName, 
+  p.email, 
+  s.tripID, 
+  s.seatNumber
+FROM Passenger p
+JOIN Ticket t ON p.passengerID = t.passengerID
+JOIN Seat s ON t.seatID = s.seatID
+JOIN Trip tr ON s.tripID = tr.tripID
+WHERE 
+  tr.tripID =16;
 
+--7
+--חמשת הכיסאות הכי פופולריים
+SELECT s.seatNumber, COUNT(t.ticketID) AS ticketCount
+FROM Ticket t
+JOIN Seat s ON t.seatID = s.seatID
+WHERE s.isAvailable = FALSE
+GROUP BY s.seatNumber
+ORDER BY ticketCount DESC
+LIMIT 5;
 
-ALTER TABLE Seat
-ADD CONSTRAINT fk_seat_trip
-FOREIGN KEY (tripID)
-REFERENCES Trip(tripID)
-ON DELETE CASCADE;
-
-ALTER TABLE SpecialNeedPassenger
-ADD CONSTRAINT fk_snp_passenger
-FOREIGN KEY (passengerID)
-REFERENCES Passenger(passengerID)
-ON DELETE CASCADE;
-
-ALTER TABLE SpecialNeedPassenger
-ADD CONSTRAINT fk_snp_disability
-FOREIGN KEY (disabilityType)
-REFERENCES Disability(disabilityType)
-ON DELETE CASCADE;
-
-ALTER TABLE Ticket
-DROP CONSTRAINT ticket_seatid_fkey;
-
-ALTER TABLE Ticket
-ADD CONSTRAINT fk_ticket_passenger
-FOREIGN KEY (passengerID)
-REFERENCES Passenger(passengerID)
-ON DELETE CASCADE;
-
-ALTER TABLE Ticket
-ADD CONSTRAINT fk_ticket_seat
-FOREIGN KEY (seatID)
-REFERENCES Seat(seatID)
-ON DELETE CASCADE;
+--8
+--Show available seats for a specific trip
+SELECT s.seatNumber
+FROM Seat s
+WHERE s.isAvailable = TRUE AND s.tripID = 12
+ORDER BY s.seatNumber;
 
 
-ALTER TABLE discountTicket
-DROP CONSTRAINT discountticket_discountid_fkey;
 
-ALTER TABLE discountTicket
-DROP CONSTRAINT discountticket_ticketid_fkey;
 
-ALTER TABLE discountTicket
-ADD CONSTRAINT fk_discount_ticket
-FOREIGN KEY (discountID)
-REFERENCES Discount(discountID)
-ON DELETE CASCADE;
+---------delete-----------
+DELETE FROM Passenger
+WHERE passengerID=422491937	
 
-ALTER TABLE discountTicket
-ADD CONSTRAINT fk_ticket_discount
-FOREIGN KEY (ticketID)
-REFERENCES Ticket(ticketID)
-ON DELETE CASCADE;
+--1
+--Clean up inactive passengers who have not purchased any tickets since before
+--the year 2020 or never made a purchase at all.
+DELETE FROM Passenger
+WHERE passengerID IN (
+  SELECT p.passengerID
+  FROM Passenger p
+  LEFT JOIN Ticket t ON p.passengerID = t.passengerID
+  GROUP BY p.passengerID
+  HAVING MAX(EXTRACT(YEAR FROM t.purchaseDate)) IS NULL 
+     OR MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
+);
