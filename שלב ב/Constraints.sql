@@ -6,22 +6,34 @@ ADD CONSTRAINT chk_percentage_range CHECK (percentage >= 0 AND percentage <= 100
 ALTER TABLE Ticket
 ALTER COLUMN price SET NOT NULL;
 
+ALTER TABLE Seat
+ADD CONSTRAINT unique_seat_per_trip
+UNIQUE (tripID, seatNumber);
+
+--check that all emails are valid
+ALTER TABLE Passenger
+ADD CONSTRAINT chk_valid_email
+CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+
+
 --add delete on casecade
--- BlockedPassenger תלויה ב-Passenger
+ALTER TABLE BlockedPassenger
+DROP CONSTRAINT blocked_passenger_passengerid_fkey;
+
+
 ALTER TABLE BlockedPassenger
 ADD CONSTRAINT fk_blocked_passenger
 FOREIGN KEY (passengerID)
 REFERENCES Passenger(passengerID)
 ON DELETE CASCADE;
 
--- Seat תלויה ב-Trip
+
 ALTER TABLE Seat
 ADD CONSTRAINT fk_seat_trip
 FOREIGN KEY (tripID)
 REFERENCES Trip(tripID)
 ON DELETE CASCADE;
 
--- SpecialNeedPassenger תלויה ב-Passenger וב-Disability
 ALTER TABLE SpecialNeedPassenger
 ADD CONSTRAINT fk_snp_passenger
 FOREIGN KEY (passengerID)
@@ -34,7 +46,7 @@ FOREIGN KEY (disabilityType)
 REFERENCES Disability(disabilityType)
 ON DELETE CASCADE;
 
--- Ticket תלויה ב-Passenger וב-Seat
+
 ALTER TABLE Ticket
 ADD CONSTRAINT fk_ticket_passenger
 FOREIGN KEY (passengerID)
@@ -47,7 +59,10 @@ FOREIGN KEY (seatID)
 REFERENCES Seat(seatID)
 ON DELETE CASCADE;
 
--- discountTicket תלויה ב-Discount וב-Ticket
+
+ALTER TABLE discountTicket
+DROP CONSTRAINT discountticket_discountid_fkey;
+
 ALTER TABLE discountTicket
 ADD CONSTRAINT fk_discount_ticket
 FOREIGN KEY (discountID)
