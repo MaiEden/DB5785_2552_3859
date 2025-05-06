@@ -97,22 +97,3 @@ FROM Seat s
 WHERE s.isAvailable = TRUE AND s.tripID = 12
 ORDER BY s.seatNumber;
 
-
-
-
----------delete-----------
-DELETE FROM Passenger
-WHERE passengerID=422491937	
-
---1
---Clean up inactive passengers who have not purchased any tickets since before
---the year 2020 or never made a purchase at all.
-DELETE FROM Passenger
-WHERE passengerID IN (
-  SELECT p.passengerID
-  FROM Passenger p
-  LEFT JOIN Ticket t ON p.passengerID = t.passengerID
-  GROUP BY p.passengerID
-  HAVING MAX(EXTRACT(YEAR FROM t.purchaseDate)) IS NULL 
-     OR MAX(EXTRACT(YEAR FROM t.purchaseDate)) < 2020
-);

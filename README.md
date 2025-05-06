@@ -289,17 +289,10 @@ This phase covered the full database design and implementation, ensuring:
 # Stage B
 ## Table of Contents
 
-- [Introduction](#1-introduction)
-- [Database Design](#2-database-design)
-  - [ERD Diagram](#erd-diagram)
-  - [DSD Schema](#dsd-schema)
-  - [Normalization](#normalization)
-- [Database Implementation](#3-database-implementation)
-  - [Creating Tables](#creating-tables)
-  - [Data Insertion Methods](#data-insertion-methods)
-  - [Querying Data](#querying-data)
-- [Backup and Restoration](#4-backup-and-restoration)
-- [Conclusion](#5-conclusion)
+- [Queries](#queries)
+- [Delete queries](#delete-queries)
+- [Update queries](#update-queries)
+- [Constraints](#constraints)
 
 ## Queries
 All the queries below are in the file **[Queries.sql](./שלב%20ב/sql/Queries.sql)**
@@ -336,8 +329,6 @@ The legal department received reports of blocked passengers being charged or abl
 Finds passengers who were blocked and still purchased at least one ticket during their block period. Returns the passenger ID, full name, and the number of tickets purchased while blocked.
 
 ```sql
--- Identify blocked passengers who bought tickets during their block period
--- Returns passenger ID, full name, and number of tickets purchased
 SELECT sub.passengerid, sub.fullname, sub.number_of_ticket_purchased
 FROM (
     SELECT p.passengerid, p.fullname,
@@ -358,7 +349,7 @@ WHERE sub.number_of_ticket_purchased >= 1;
 
 ### 3. Identifying Trips with Special Needs Passengers During High-Demand Period
 #### Motivation:
-During the period from July 1 to September 1, 2024, there is an increase in public transportation demand, especially due to summer vacation. To ensure a safe and accessible travel experience for passengers with special needs, the operations team needs to assess how many such passengers have booked tickets during this time period. The goal is to verify that adequate accessibility equipment (such as lifts and dedicated seating) is available, prepare additional staff at relevant stations, and monitor the allocation of accessible resources. This query supports the transport operations team’s preparation for the high-demand season by identifying trips with special needs passengers and the number of such passengers on each trip.
+During the period from July to September, there is an increase in public transportation demand, especially due to summer vacation. To ensure a safe and accessible travel experience for passengers with special needs, the operations team needs to assess how many such passengers have booked tickets during this time period. The goal is to verify that adequate accessibility equipment (such as lifts and dedicated seating) is available, prepare additional staff at relevant stations, and monitor the allocation of accessible resources.
 
 #### What the Query Does:
 This SQL query identifies all trips that include passengers with special needs who purchased tickets between July 1 and September 1, 2024. It returns the trip ID and the count of special needs passengers per trip.
@@ -420,12 +411,11 @@ GROUP BY tripID;
 ![hgv](./שלב%20ב/images/Table5Sreenshot.png)
 
 
-### 6. Identifying Passengers on a Specific Trip  
+### 6. Identifying Passengers on a Specific Trip After a Security Incident
 #### Motivation:  
-Security or operational staff may need to quickly identify all passengers on a specific trip, such as Trip 16, for auditing, investigation, or safety purposes.
-
+A bombing incident occurred on trip number 16. A terrorist left an explosive device on the bus, and it detonated. The police are now conducting an investigation and have formally requested the list of all passengers who were on that trip. This query helps retrieve those passengers to support the ongoing investigation.
 #### What the Query Does:  
-Lists the full name, email, trip ID, and seat number of all passengers on Trip 16, ordered by ticket purchase date.
+Finds all passengers who were on trip 16, including their names, emails, and seat numbers.
 
 ```sql
 SELECT 
@@ -438,8 +428,7 @@ JOIN Ticket t ON p.passengerID = t.passengerID
 JOIN Seat s ON t.seatID = s.seatID
 JOIN Trip tr ON s.tripID = tr.tripID
 WHERE 
-  tr.tripID = 16
-ORDER BY t.purchaseDate;
+  tr.tripID = 16;
 ```
 
 #### Query output:
@@ -469,7 +458,7 @@ LIMIT 5;
 
 ### 8. Displaying Available Seats for a Specific Trip  
 #### Motivation:  
-Providing real-time seat availability helps improve user experience during the booking process by allowing passengers to choose their preferred seats.
+As part of a booking system, the platform needs to quickly fetch which seats are still available for a given trip. This query helps preventing double-booking and ensures passengers only see free seats when selecting theirs.
 
 #### What the Query Does:  
 Shows all available seats for trip ID 12.
@@ -489,10 +478,10 @@ All the delete queries below are in the file **[RollbackCommit.sql](./שלב%20�
 
 ### 1. Cleaning Up Inactive Passengers  
 #### Motivation:  
-The system retains data on passengers who haven't purchased tickets since before 2020 or never purchased at all. To reduce database clutter and improve performance, we need to remove these inactive users.
+The system retains data on passengers who haven't purchased tickets since before 2020. To reduce database clutter and improve performance, we need to remove these inactive users.
 
 #### What the Query Does:  
-Deletes passengers whose last ticket purchase was before 2020 or who never purchased any tickets.
+Deletes passengers whose last ticket purchase was before 2020.
 
 ```sql
 START TRANSACTION;
@@ -529,15 +518,14 @@ As we can see there are five less lines and John Cohen was deleted.
 Many discounts in the system haven’t been used in over five years. To focus on active and relevant deals, unused and expired discounts are removed.
 
 #### What the Query Does:  
-Deletes discounts not used in the past five years by checking their absence in the `discountTicket` table.
+Deletes discounts not used in the past five years by checking their records in `discountTicket` table.
 
 ```sql
 DELETE FROM Discount
-WHERE discountID NOT IN (
+WHERE discountID IN (
     SELECT DISTINCT discountID
     FROM discountTicket
-    WHERE expirationDate >= CURRENT_DATE - INTERVAL '5 year'
-);
+    WHERE expirationDate <= CURRENT_DATE - INTERVAL '5 year');
 ```
 
 The table before delete query:
@@ -550,8 +538,7 @@ The table after delete query:
 
 ### 3. Removing High Discounts from Popular Tickets  
 #### Motivation:  
-Some tickets are popular and don’t need large discounts to sell well. To protect revenue, deep discounts on these tickets are removed.
-
+Some tickets are popular and no longer require significant discounts to sell. Since these tickets used to need promotions but now sell well on their own, unnecessary discounts are removed to protect revenue.
 #### What the Query Does:  
 Deletes discount entries over 40% for a specific popular ticket.
 
@@ -650,7 +637,7 @@ The table after update query:
 
 ### 3. Automatically Unblock Long-Blocked Passengers Due to Payment Issues  
 #### Motivation:  
-To prevent indefinite blocking of users due to unresolved payment issues, the system should reassess cases that have been inactive for over 6 months. This query helps initiate reactivation by scheduling an unblock date one month from today, aiding customer support in resolving long-term blocks and encouraging passenger re-engagement.
+To prevent indefinite blocking of users due to unresolved payment issues, the system should reassess cases that have been inactive for over 6 months. This query helps initiate reactivation by scheduling an unblock date one month from today, aiding customer support in resolving long-term blocks.
 
 #### What the Query Does:  
 It updates the `unblockDate` to one month from today for passengers blocked over 6 months ago due to payment issues and who have not yet been assigned an unblock date.
