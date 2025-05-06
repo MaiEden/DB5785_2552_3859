@@ -302,6 +302,7 @@ This phase covered the full database design and implementation, ensuring:
 - [Conclusion](#5-conclusion)
 
 ## Queries
+All the queries below are in the file **[Queries.sql](./שלב%20ב/sql/Queries.sql)**
 ### 1. Detecting Tickets with the Highest Number of Discounts
 #### Motivation:
 The marketing team requested an analysis to identify tickets that received an unusually high number of discounts. This insight is critical for detecting potential misuse of discount codes, system glitches in coupon assignment, or overly permissive discount stacking rules. The goal is to evaluate whether stricter policies should be implemented to prevent abuse and ensure fair usage.
@@ -351,6 +352,7 @@ FROM (
 ) AS sub
 WHERE sub.number_of_ticket_purchased >= 1;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table2Sreenshot.png)
 
@@ -370,6 +372,7 @@ WHERE
   AND t.purchaseDate BETWEEN DATE '2024-07-01' AND DATE '2024-09-01'
 GROUP BY s.tripID;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table3Sreenshot.png)
 
@@ -396,6 +399,7 @@ HAVING AVG(t.price) > (
 )
 ORDER BY avg_price_per_passenger DESC;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table4Sreenshot.png)
 
@@ -411,6 +415,7 @@ FROM Seat
 WHERE isAvailable = FALSE
 GROUP BY tripID;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table5Sreenshot.png)
 
@@ -436,6 +441,7 @@ WHERE
   tr.tripID = 16
 ORDER BY t.purchaseDate;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table6Sreenshot.png)
 
@@ -456,6 +462,7 @@ GROUP BY s.seatNumber
 ORDER BY ticketCount DESC
 LIMIT 5;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table7Sreenshot.png)
 
@@ -473,10 +480,13 @@ FROM Seat s
 WHERE s.isAvailable = TRUE AND s.tripID = 12
 ORDER BY s.seatNumber;
 ```
+
 #### Query output:
 ![hgv](./שלב%20ב/images/Table8Sreenshot.png)
 
 ## Delete queries
+All the delete queries below are in the file **[RollbackCommit.sql](./שלב%20ב/sql/RollbackCommit.sql)**
+
 ### 1. Cleaning Up Inactive Passengers  
 #### Motivation:  
 The system retains data on passengers who haven't purchased tickets since before 2020 or never purchased at all. To reduce database clutter and improve performance, we need to remove these inactive users.
@@ -498,6 +508,7 @@ WHERE passengerID IN (
 
 commit;
 ```
+
 The table before delete query (with START TRANSACTION):
 
 ![BeforeDeleteSreenshot1](./שלב%20ב/images/BeforeDeleteSreenshot1.png)
@@ -528,6 +539,7 @@ WHERE discountID NOT IN (
     WHERE expirationDate >= CURRENT_DATE - INTERVAL '5 year'
 );
 ```
+
 The table before delete query:
 
 ![BeforeDeleteSreenshot2](./שלב%20ב/images/BeforeDeleteSreenshot2.png)
@@ -556,6 +568,7 @@ WHERE ticketID = 47
 
 rollback;
 ```
+
 The table before delete query (with START TRANSACTION):
 
 ![BeforeDeleteSreenshot3](./שלב%20ב/images/BeforeDeleteSreenshot3.png)
@@ -574,11 +587,13 @@ The table after delete query after rollback:
 
 
 ## Update queries
+All the update queries below are in the file **[RollbackCommit.sql](./שלב%20ב/sql/RollbackCommit.sql)**
 ### 1. Extending Expiration for Least-Used Expired Discounts  
 #### Motivation:  
 Marketing aims to re-engage passengers by extending the expiration of the five least-used discounts that recently expired. This gives these underutilized discounts a second chance, potentially increasing ticket sales by offering them again to passengers who may have missed them or abandoned their bookings previously. The idea is to evaluate if extending their availability encourages more ticket purchases.
 #### What the Query Does:  
 Updates expiration dates for the 5 least-used discounts that expired in the past 7 days.
+
 ```sql
 UPDATE discountTicket dt
 JOIN (
@@ -592,6 +607,7 @@ JOIN (
 ) AS leastUsed ON dt.discountID = leastUsed.discountID
 SET dt.expirationDate = DATE_ADD(CURDATE(), INTERVAL 60 DAY);
 ```
+
 The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
 
 ![BeforeUpdating1](./שלב%20ב/images/BeforeUpdating1.png)
@@ -623,6 +639,7 @@ WHERE seatID IN (
         ))   AND S.isAvailable = True
 );
 ```
+
 The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
 
 ![BeforeUpdating2](./שלב%20ב/images/BeforeUpdating2.png)
@@ -645,6 +662,7 @@ WHERE reason = 'Payment issues'
   AND unblockDate IS NULL
   AND blockedDate <= CURRENT_DATE - INTERVAL '6 months';
 ```
+
 The table before update query (In order to view all rows that will be updte, we replaced `UPDATE` with `SELECT * FROM` to preview the data before updating):
 
 ![BeforeUpdating3](./שלב%20ב/images/BeforeUpdating3.png)
@@ -654,6 +672,7 @@ The table after update query:
 ![AfterUpdating3](./שלב%20ב/images/AfterUpdating3.png)
 
 ## Constraints
+All the constraints below are in the file **[Constraints.sql](./שלב%20ב/sql/Constraints.sql)**
 ### 1. Enforcing Logical Range for Discount Percentages  
 #### Motivation:  
 The system allows discounts on ticket prices, but without constraints, there's a risk of unrealistic discount values—like negative percentages or values over 100%. Such cases could lead to negative prices or price increases instead of reductions. This constraint ensures all discounts remain within logical business limits, protecting pricing integrity and invoice accuracy.
@@ -665,6 +684,7 @@ It adds a check constraint to the `Discount` table to ensure the discount percen
 ALTER TABLE Discount
 ADD CONSTRAINT chk_percentage_range CHECK (percentage >= 0 AND percentage <= 100);
 ```
+
 Try to insert wrong valus:
 
 ![wrongInsert1](./שלב%20ב/images/wrongInsert1.png)
@@ -698,6 +718,7 @@ ALTER TABLE Seat
 ADD CONSTRAINT unique_seat_per_trip
 UNIQUE (tripID, seatNumber);
 ```
+
 Try to insert wrong valus:
 
 ![wrongInsert3](./שלב%20ב/images/wrongInsert3.png)
@@ -713,6 +734,7 @@ Modifies the `Ticket` table to ensure that every entry has a non-null value for 
 ALTER TABLE Ticket
 ALTER COLUMN price SET NOT NULL;
 ```
+
 Try to insert wrong valus:
 
 ![wrongInsert2](./שלב%20ב/images/wrongInsert2.png)
