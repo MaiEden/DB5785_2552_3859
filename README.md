@@ -732,9 +732,13 @@ In this section, we integrate with the `Bus`, `Trip`, `Route` tables. These enti
 
 ### **ERD Diagram**
 After reviewing the backup we got, we performed reverse engineering and got this ERD schema:
+
+
 ![IntegrationERD](./שלב%20ג/images/IntegrationERD.png)
 ### **DSD Schema**
 So we convert to the next DSD schema:
+
+
 ![IntegrationERD](./שלב%20ג/images/IntegrationDSD.png)
 ## Relation description
 We wrote a description of the integrated system's entities and their relationships.
@@ -769,8 +773,7 @@ Stores details about individual buses in the fleet.
 Stores records of individual bus trips made along a route.  
 
 **Attributes:**  
-- `tripID (PK)` – Unique identifier for the trip (auto-incremented).  
-- `route_number (FK)` – The route being followed during the trip (reference to `Route`).  
+- `tripID (PK)` – Unique identifier for the trip (auto-incremented).   
 - `license_plate (FK)` – The bus performing the trip (reference to `Bus`).  
 - `departure_time` – The scheduled departure time.  
 - `arrival_time` – The scheduled arrival time.  
@@ -778,6 +781,5 @@ Stores records of individual bus trips made along a route.
 ---
 
 ## Entity Relationships
-- A **Route** can have multiple **Trips**.
 - A **Bus** is linked to one **Route** at a time, and can appear in multiple **Trips**.
 - Each **Trip** must be assigned a valid **Route** and **Bus**.
