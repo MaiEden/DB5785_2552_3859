@@ -727,6 +727,57 @@ Try to insert wrong valus:
 ![wrongInsert2](./שלב%20ב/images/wrongInsert2.png)
 
 
-# Stage C
-In this part we do integration with the tables `Bus`, `Trip`, `Route`.
+# Stage C – Core Integration: Route, Bus, Trip
+In this section, we integrate with the `Bus`, `Trip`, `Route` tables. These entities belong to the **Fleet Management** and **Route & Scheduling** modules of the system.
+
+### **ERD Diagram**
+After reviewing the backup we got, we performed reverse engineering and got this ERD schema:
+![IntegrationERD](./שלב%20ג/images/IntegrationERD.png)
+### **DSD Schema**
+So we convert to the next DSD schema:
+![IntegrationERD](./שלב%20ג/images/IntegrationDSD.png)
 ## Relation description
+We wrote a description of the integrated system's entities and their relationships.
+
+## Entities
+
+### 1. Route  
+Defines bus travel paths with start and end locations and total duration.  
+
+**Attributes:**  
+- `route_number (PK)` – Unique identifier for the route.  
+- `length_km` – The total distance of the route in kilometers.  
+- `duration_minutes` – Estimated time in minutes to complete the route.  
+- `start_location` – The name of the starting point.  
+- `end_location` – The name of the destination.  
+- `active` – Indicates whether the route is currently in use (`true/false`).  
+
+---
+
+### 2. Bus  
+Stores details about individual buses in the fleet.  
+
+**Attributes:**  
+- `license_plate (PK)` – Unique identifier for the bus (plate number).  
+- `route_number (FK)` – The current route assigned to the bus (reference to `Route`).  
+- `line_num` – The line number the bus is operating on.  
+- `capacity` – The total number of passenger seats (must be greater than 0).   
+
+---
+
+### 3. Trip  
+Stores records of individual bus trips made along a route.  
+
+**Attributes:**  
+- `tripID (PK)` – Unique identifier for the trip (auto-incremented).  
+- `route_number (FK)` – The route being followed during the trip (reference to `Route`).  
+- `license_plate (FK)` – The bus performing the trip (reference to `Bus`).  
+- `departure_time` – The scheduled departure time.  
+- `arrival_time` – The scheduled arrival time.  
+
+---
+
+## Entity Relationships
+- A **Route** can have multiple **Trips**.
+- A **Bus** is linked to one **Route** at a time, and can appear in multiple **Trips**.
+- Each **Trip** must be assigned a valid **Route** and **Bus**.
