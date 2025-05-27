@@ -740,6 +740,8 @@ So we convert to the next DSD schema:
 
 
 ![IntegrationERD](./שלב%20ג/images/IntegrationDSD.png)
+### **Full ERD Diagram**
+
 ## Relation description
 We wrote a description of the integrated system's entities and their relationships.
 
@@ -782,4 +784,4 @@ Stores records of individual bus trips made along a route.
 
 ## Entity Relationships
 - A **Bus** is linked to one **Route** at a time, and can appear in multiple **Trips**.
-- Each **Trip** must be assigned a valid **Route** and **Bus**.
+- Each **Trip** must be assigned to a **Bus**.
