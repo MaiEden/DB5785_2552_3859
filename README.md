@@ -725,3 +725,8 @@ ALTER COLUMN price SET NOT NULL;
 Try to insert wrong valus:
 
 ![wrongInsert2](./שלב%20ב/images/wrongInsert2.png)
+
+
+# Stage C
+In this part we do integration with the tables `Bus`, `Trip`, `Route`.
+## Relation description
