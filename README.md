@@ -904,36 +904,37 @@ The goal is to provide a comprehensive overview of ticket purchases, enriched wi
 #### What the Query Does:  
 Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
 
-```sql
-  CREATE VIEW TicketedTripDetails AS
-  SELECT
-      p.passengerID,
-      p.fullName AS PassengerName,
-      p.email AS PassengerEmail,
-      t.ticketID,
-      t.purchaseDate,
-      t.price AS TicketBasePrice,
-      s.seatNumber,
-      d.discountCode,
-      d.percentage AS DiscountPercentage,
-      (t.price * (1 - COALESCE(d.percentage, 0) / 100.0)) AS FinalPrice,
-      tr.trip_id AS tripId,
-      tr.departure_time AS TripDepartureTime,
-      tr.arrival_time AS TripArrivalTime
-  FROM
-      Passenger AS p
-  JOIN
-      Ticket AS t ON p.passengerID = t.passengerID
-  JOIN
-      Seat AS s ON t.seatID = s.seatID
-  JOIN
-      Trip AS tr ON s.tripID = tr.trip_id -- שילוב טבלת Trip
-  LEFT JOIN
-      discountTicket AS dt ON t.ticketID = dt.ticketID
-  LEFT JOIN
-      Discount AS d ON dt.discountID = d.discountID;
-```
+###  Query 1: Displaying All Tickets Sold for a Specific Trip
+#### Motivation:  
+This query enables the ticketing and operations teams to immediately view the list of passengers for a specific trip, along with their ticket details. It’s useful for occupancy management, validation checks, updates, or logistical coordination related to a particular trip.
 
-### 
+#### What the Query Does:  
+Returns all ticket records for Trip ID 20, including passenger name, seat number, ticket ID, and the final price paid (after discounts).
 
-### 4. Enforcing Mandatory Ticket Price  
+### Query 2: Finding Passengers Who Paid More Than X for Trips Departing on Specific Dates
+#### Motivation:  
+This query supports revenue analysis by identifying which passengers paid higher final prices for trips departing within a given date range. It can help financial analysts and marketing teams understand passenger spending patterns and pricing effectiveness.
+
+#### What the Query Does: 
+Returns a list of passengers whose trips depart between May 21 and May 23, 2025 (exclusive), and who paid more than 30.00 in final price. You can change the date range and price threshold as needed.
+
+## 2. Trip Occupancy Summary for Route & Scheduling / Operations Planning
+#### Motivation: 
+This view is essential for efficient operations planning and route management. It not only displays detailed information about each trip, the route, and the assigned bus, but also calculates how many seats are occupied, how many are still available, and the overall occupancy rate. This data is critical for making decisions such as increasing service frequency, adjusting schedules, or allocating buses of different sizes based on demand.
+
+#### What the Query Does: 
+Creates a summary view called TripOccupancySummary that includes trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
+
+### Query 1: Identifying Overcrowded Trips for a Specific Date Range
+#### Motivation: 
+Route planners and operations managers need to identify trips that are nearing or exceeding full capacity. Detecting trips with high occupancy helps in decision-making regarding adding more buses, increasing trip frequency, or reallocating fleet resources efficiently. 
+  
+#### What the Query Does: 
+Shows trips departing between May 21 and May 23, 2025, with an occupancy rate higher than 60%.
+
+### Query 2: Displaying Trips with Less Than 10 Available Seats
+#### Motivation: 
+Operations and ticketing teams need to quickly identify trips that are nearly full. This information helps in providing accurate recommendations to customers, managing last-minute ticket sales, and planning backup buses in case of issues.
+  
+#### What the Query Does: 
+Shows trips where fewer than 10 seats are available, along with route and bus details.
