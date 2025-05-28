@@ -740,7 +740,6 @@ So we convert to the next DSD schema:
 
 
 ![IntegrationERD](./שלב%20ג/images/IntegrationDSD.png)
-### **Full ERD Diagram**
 
 ## Relation description
 We wrote a description of the integrated system's entities and their relationships.
@@ -785,3 +784,156 @@ Stores records of individual bus trips made along a route.
 ## Entity Relationships
 - A **Bus** is linked to one **Route** at a time, and can appear in multiple **Trips**.
 - Each **Trip** must be assigned to a **Bus**.
+
+### **Full ERD Diagram**
+Now, we drow the integraed system ERD:
+
+![allSystemERD](./שלב%20ג/images/allSystemERD.png)
+
+
+# Integration
+
+We did integration between two PostgreSQL databases (`mydatabase` and `integrationDatabase`) using the `postgres_fdw` extension.
+
+### 1. Enable Extension
+```sql
+CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+```
+
+### 2. Create Foreign Server
+```sql
+CREATE SERVER integration_server
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (host 'localhost', dbname 'integrationDatabase', port '5432');
+```
+
+### 3. Create User Mapping
+```sql
+CREATE USER MAPPING FOR current_user
+SERVER integration_server
+OPTIONS (user 'noder', password 'docker');
+```
+
+### 4. Define Foreign Tables
+```sql
+CREATE FOREIGN TABLE route_remote (
+    route_number INT,
+    length_km DECIMAL(5,2),
+    duration_minutes INT,
+    start_location VARCHAR(100),
+    end_location VARCHAR(100),
+    active BOOLEAN
+) SERVER integration_server
+OPTIONS (schema_name 'public', table_name 'route');
+
+CREATE FOREIGN TABLE bus_remote (
+    license_plate VARCHAR(30),
+    route_number INT,
+    line_num INT,
+    capacity INT
+) SERVER integration_server
+OPTIONS (schema_name 'public', table_name 'bus');
+
+CREATE FOREIGN TABLE trip_remote (
+    trip_id INT,
+    license_plate VARCHAR(30),
+    departure_time TIMESTAMP,
+    arrival_time TIMESTAMP
+) SERVER integration_server
+OPTIONS (schema_name 'public', table_name 'trip');
+```
+
+### 5. Create Local Tables
+```sql
+CREATE TABLE route (
+    route_number INT PRIMARY KEY,
+    length_km DECIMAL(5,2),
+    duration_minutes INT,
+    start_location VARCHAR(100),
+    end_location VARCHAR(100),
+    active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE bus (
+    license_plate VARCHAR(30) PRIMARY KEY,
+    route_number INT,
+    line_num INT,
+    capacity INT CHECK (capacity > 0),
+    FOREIGN KEY (route_number) REFERENCES route(route_number)
+);
+```
+
+### 6. Import Data from Remote Tables
+```sql
+INSERT INTO route
+SELECT * FROM route_remote
+ON CONFLICT (route_number) DO NOTHING;
+
+INSERT INTO bus
+SELECT * FROM bus_remote
+ON CONFLICT (license_plate) DO NOTHING;
+```
+
+### 7. Update Existing `trip` Table
+```sql
+ALTER TABLE trip
+ADD COLUMN license_plate VARCHAR(30),
+ADD COLUMN departure_time TIMESTAMP,
+ADD COLUMN arrival_time TIMESTAMP;
+
+INSERT INTO trip (tripID, license_plate, departure_time, arrival_time)
+SELECT trip_id, license_plate, departure_time, arrival_time
+FROM trip_remote
+ON CONFLICT (tripID) DO UPDATE
+SET
+    license_plate = EXCLUDED.license_plate,
+    departure_time = EXCLUDED.departure_time,
+    arrival_time = EXCLUDED.arrival_time;
+```
+
+## Notes
+
+- Conflicts are handled safely using `ON CONFLICT DO NOTHING` or `DO UPDATE`.
+- Existing structure of `trip` table was preserved by extending it without deletion.
+
+# Views
+## 1. Viewing Ticketed Trip Details
+#### Motivation:  
+The goal is to provide a comprehensive overview of ticket purchases, enriched with passenger, seat, discount, and trip details. This view aids operational staff in understanding the full context of each ticket — who bought it, when, where they’re headed, and what discount (if any) was applied. This is essential for handling changes, cancellations, and support inquiries more effectively.
+
+#### What the Query Does:  
+Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
+
+```sql
+  CREATE VIEW TicketedTripDetails AS
+  SELECT
+      p.passengerID,
+      p.fullName AS PassengerName,
+      p.email AS PassengerEmail,
+      t.ticketID,
+      t.purchaseDate,
+      t.price AS TicketBasePrice,
+      s.seatNumber,
+      d.discountCode,
+      d.percentage AS DiscountPercentage,
+      (t.price * (1 - COALESCE(d.percentage, 0) / 100.0)) AS FinalPrice,
+      tr.trip_id AS tripId,
+      tr.departure_time AS TripDepartureTime,
+      tr.arrival_time AS TripArrivalTime
+  FROM
+      Passenger AS p
+  JOIN
+      Ticket AS t ON p.passengerID = t.passengerID
+  JOIN
+      Seat AS s ON t.seatID = s.seatID
+  JOIN
+      Trip AS tr ON s.tripID = tr.trip_id -- שילוב טבלת Trip
+  LEFT JOIN
+      discountTicket AS dt ON t.ticketID = dt.ticketID
+  LEFT JOIN
+      Discount AS d ON dt.discountID = d.discountID;
+```
+
+### 
+
+### 4. Enforcing Mandatory Ticket Price  
