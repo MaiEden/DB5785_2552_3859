@@ -901,7 +901,7 @@ SET
 #### Motivation:  
 The goal is to provide a comprehensive overview of ticket purchases, enriched with passenger, seat, discount, and trip details. This view aids operational staff in understanding the full context of each ticket — who bought it, when, where they’re headed, and what discount (if any) was applied. This is essential for handling changes, cancellations, and support inquiries more effectively.
 
-#### What the Query Does:  
+#### What details in the view:  
 Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
 
 ###  Query 1: Displaying All Tickets Sold for a Specific Trip
