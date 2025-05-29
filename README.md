@@ -901,7 +901,7 @@ SET
 #### Motivation:  
 The goal is to provide a comprehensive overview of ticket purchases, enriched with passenger, seat, discount, and trip details. This view aids operational staff in understanding the full context of each ticket — who bought it, when, where they’re headed, and what discount (if any) was applied. This is essential for handling changes, cancellations, and support inquiries more effectively.
 
-#### What details in the view:  
+#### What details are shown in the view:
 Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
 
 ###  Query 1: Displaying All Tickets Sold for a Specific Trip
@@ -922,7 +922,7 @@ Returns a list of passengers whose trips depart between May 21 and May 23, 2025 
 #### Motivation: 
 This view is essential for efficient operations planning and route management. It not only displays detailed information about each trip, the route, and the assigned bus, but also calculates how many seats are occupied, how many are still available, and the overall occupancy rate. This data is critical for making decisions such as increasing service frequency, adjusting schedules, or allocating buses of different sizes based on demand.
 
-#### What the Query Does: 
+#### What details are shown in the view:
 Creates a summary view called TripOccupancySummary that includes trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
 
 ### Query 1: Identifying Overcrowded Trips for a Specific Date Range
