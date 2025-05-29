@@ -906,7 +906,7 @@ SET
 The goal is to provide a comprehensive overview of ticket purchases, enriched with passenger, seat, discount, and trip details. This view aids operational staff in understanding the full context of each ticket — who bought it, when, where they’re headed, and what discount (if any) was applied. This is essential for handling changes, cancellations, and support inquiries more effectively.
 
 #### What details are shown in the view:
-Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
+Displays detailed information about each ticket, including passenger name, seat assignment, final ticket pricing, and trip schedule details.
 
 #### View contant:
 ![View1](./שלב%20ג/images/View1.png)
@@ -920,13 +920,9 @@ This query enables the ticketing and operations teams to immediately view the li
 Returns all ticket records for Trip ID 20, including passenger name, seat number, ticket ID, and the final price paid (after discounts).
 
 ```sql
-  SELECT
-      TripID, TripDepartureTime, PassengerName, ticketID,
-      seatNumber, FinalPrice
-  FROM
-      TicketedTripDetails
-  WHERE
-      TripID = 20;
+  SELECT TripID, TripDepartureTime, PassengerName, ticketID, seatNumber, FinalPrice
+  FROM TicketedTripDetails
+  WHERE TripID = 20;
 ```
 
 #### Output:
@@ -940,12 +936,10 @@ This query supports revenue analysis by identifying which passengers paid higher
 Returns a list of passengers whose trips depart between May 21 and May 23, 2025 (exclusive), and who paid more than 30.00 in final price. You can change the date range and price threshold as needed.
 
 ```sql
-  SELECT
-      PassengerName, TripID, TripDepartureTime, ticketID, FinalPrice
-  FROM
-      TicketedTripDetails
-  WHERE
-      CAST(TripDepartureTime AS DATE) > '2025-05-20' AND TripDepartureTime  < '2025-05-24' AND FinalPrice > 30.00; 
+  SELECT PassengerName, TripID, TripDepartureTime, ticketID, FinalPrice
+  FROM TicketedTripDetails
+  WHERE CAST(TripDepartureTime AS DATE) > '2025-05-20'
+    AND TripDepartureTime < '2025-05-24' AND FinalPrice > 30.00; 
 ```
 #### Output:
 ![V1Q2](./שלב%20ג/images/V1Q2.png)
@@ -955,7 +949,7 @@ Returns a list of passengers whose trips depart between May 21 and May 23, 2025 
 This view is essential for efficient operations planning and route management. It not only displays detailed information about each trip, the route, and the assigned bus, but also calculates how many seats are occupied, how many are still available, and the overall occupancy rate. This data is critical for making decisions such as increasing service frequency, adjusting schedules, or allocating buses of different sizes based on demand.
 
 #### What details are shown in the view:
-Creates a summary view called TripOccupancySummary that includes trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
+Displays trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
 
 #### View contant:
 ![View2](./שלב%20ג/images/View2.png)
@@ -968,13 +962,10 @@ Route planners and operations managers need to identify trips that are nearing o
 Shows trips departing between May 21 and May 23, 2025, with an occupancy rate higher than 60%.
 
 ```sql
-  SELECT
-      trip_id, departure_time, BusLicensePlate, route_number,
-      OccupiedSeats,  BusTotalCapacity, OccupancyPercentage
-  FROM
-      TripOccupancySummary
-  WHERE
-      CAST (departure_time AS DATE) > '2025-05-20' AND departure_time  < '2025-05-24' AND OccupancyPercentage > 60; 
+  SELECT trip_id, departure_time, BusLicensePlate, route_number, OccupiedSeats,  BusTotalCapacity, OccupancyPercentage
+  FROM TripOccupancySummary
+  WHERE CAST (departure_time AS DATE) > '2025-05-20' 
+      AND departure_time  < '2025-05-24' AND OccupancyPercentage > 60; 
 ```
 
 #### Output:
