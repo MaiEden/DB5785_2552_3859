@@ -901,8 +901,10 @@ SET
 #### Motivation:  
 The goal is to provide a comprehensive overview of ticket purchases, enriched with passenger, seat, discount, and trip details. This view aids operational staff in understanding the full context of each ticket — who bought it, when, where they’re headed, and what discount (if any) was applied. This is essential for handling changes, cancellations, and support inquiries more effectively.
 
-#### What details in the view:  
+#### What details are shown in the view:
 Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
+
+#### View contant:
 
 ###  Query 1: Displaying All Tickets Sold for a Specific Trip
 #### Motivation:  
@@ -911,6 +913,18 @@ This query enables the ticketing and operations teams to immediately view the li
 #### What the Query Does:  
 Returns all ticket records for Trip ID 20, including passenger name, seat number, ticket ID, and the final price paid (after discounts).
 
+```sql
+  SELECT
+      TripID, TripDepartureTime, PassengerName, ticketID,
+      seatNumber, FinalPrice
+  FROM
+      TicketedTripDetails
+  WHERE
+      TripID = 20;
+```
+
+#### Output:
+
 ### Query 2: Finding Passengers Who Paid More Than X for Trips Departing on Specific Dates
 #### Motivation:  
 This query supports revenue analysis by identifying which passengers paid higher final prices for trips departing within a given date range. It can help financial analysts and marketing teams understand passenger spending patterns and pricing effectiveness.
@@ -918,12 +932,24 @@ This query supports revenue analysis by identifying which passengers paid higher
 #### What the Query Does: 
 Returns a list of passengers whose trips depart between May 21 and May 23, 2025 (exclusive), and who paid more than 30.00 in final price. You can change the date range and price threshold as needed.
 
+```sql
+  SELECT
+      PassengerName, TripID, TripDepartureTime, ticketID, FinalPrice
+  FROM
+      TicketedTripDetails
+  WHERE
+      CAST(TripDepartureTime AS DATE) > '2025-05-20' AND TripDepartureTime  < '2025-05-24' AND FinalPrice > 30.00; 
+```
+#### Output:
+
 ## 2. Trip Occupancy Summary for Route & Scheduling / Operations Planning
 #### Motivation: 
 This view is essential for efficient operations planning and route management. It not only displays detailed information about each trip, the route, and the assigned bus, but also calculates how many seats are occupied, how many are still available, and the overall occupancy rate. This data is critical for making decisions such as increasing service frequency, adjusting schedules, or allocating buses of different sizes based on demand.
 
-#### What the Query Does: 
+#### What details are shown in the view:
 Creates a summary view called TripOccupancySummary that includes trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
+
+#### View contant:
 
 ### Query 1: Identifying Overcrowded Trips for a Specific Date Range
 #### Motivation: 
@@ -932,9 +958,33 @@ Route planners and operations managers need to identify trips that are nearing o
 #### What the Query Does: 
 Shows trips departing between May 21 and May 23, 2025, with an occupancy rate higher than 60%.
 
+```sql
+  SELECT
+      trip_id, departure_time, BusLicensePlate, route_number,
+      OccupiedSeats,  BusTotalCapacity, OccupancyPercentage
+  FROM
+      TripOccupancySummary
+  WHERE
+      CAST (departure_time AS DATE) > '2025-05-20' AND departure_time  < '2025-05-24' AND OccupancyPercentage > 60; 
+```
+
+#### Output:
+
 ### Query 2: Displaying Trips with Less Than 10 Available Seats
 #### Motivation: 
 Operations and ticketing teams need to quickly identify trips that are nearly full. This information helps in providing accurate recommendations to customers, managing last-minute ticket sales, and planning backup buses in case of issues.
   
 #### What the Query Does: 
 Shows trips where fewer than 10 seats are available, along with route and bus details.
+
+```sql
+  SELECT
+      trip_id, departure_time, BusLicensePlate, BusTotalCapacity, AvailableSeats,
+      route_number, start_location, end_location
+  FROM
+      TripOccupancySummary
+  WHERE
+      AvailableSeats < 10;
+```
+
+#### Output:
