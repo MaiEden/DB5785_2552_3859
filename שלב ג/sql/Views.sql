@@ -1,19 +1,12 @@
 --מבט 1: מנקודת המבט של אגף "Ticketing & Booking" – עם שילוב נתוני נסיעות
 CREATE VIEW TicketedTripDetails AS
 SELECT
-    p.passengerID,
     p.fullName AS PassengerName,
-    p.email AS PassengerEmail,
     t.ticketID,
-    t.purchaseDate,
-    t.price AS TicketBasePrice,
     s.seatNumber,
-    d.discountCode,
-    d.percentage AS DiscountPercentage,
-    (t.price * (1 - COALESCE(d.percentage, 0) / 100.0)) AS FinalPrice,
+    ROUND((t.price * (1 - COALESCE(d.percentage, 0) / 100.0)),2)  AS FinalPrice,
     tr.trip_id AS tripId,
-    tr.departure_time AS TripDepartureTime,
-    tr.arrival_time AS TripArrivalTime
+    tr.departure_time AS TripDepartureTime
 FROM
     Passenger AS p
 JOIN
@@ -27,7 +20,6 @@ LEFT JOIN
 LEFT JOIN
     Discount AS d ON dt.discountID = d.discountID;
 
-select * From TicketedTripDetails
 --שאילתה 1: הצגת כל הכרטיסים שנמכרו לטיול מסוים, כולל פרטי הנוסעים והמחיר הסופי
 SELECT
     TripID,
@@ -51,7 +43,7 @@ SELECT
 FROM
     TicketedTripDetails
 WHERE
-    CAST(TripDepartureTime AS DATE) > '2025-05-20' AND TripDepartureTime  < '2025-05-24' AND FinalPrice > 30.00; -- החלף בתאריך ובמחיר
+    TripDepartureTime > '2025-05-20' AND TripDepartureTime  < '2025-05-24' AND FinalPrice > 30.00; -- החלף בתאריך ובמחיר
 
 
 --מבט 2: מנקודת המבט של אגף "Route & Scheduling" / "Fleet Management" – עם שילוב נתוני הזמנות
@@ -59,16 +51,14 @@ CREATE VIEW TripOccupancySummary AS
 SELECT
     t.trip_id,
     t.departure_time,
-    t.arrival_time,
     t.license_plate AS BusLicensePlate,
-    b.line_num AS BusLineNumber,
     b.capacity AS BusTotalCapacity,
     r.route_number,
     r.start_location,
     r.end_location,
     COUNT(tk.ticketID) AS OccupiedSeats,
     (b.capacity - COUNT(tk.ticketID)) AS AvailableSeats,
-    (CAST(COUNT(tk.ticketID) AS DECIMAL) / b.capacity) * 100 AS OccupancyPercentage
+    ROUND((CAST(COUNT(tk.ticketID) AS DECIMAL) / b.capacity) * 100,2) AS OccupancyPercentage
 FROM
     Trip AS t
 JOIN
