@@ -969,6 +969,7 @@ Shows trips departing between May 21 and May 23, 2025, with an occupancy rate hi
 ```
 
 #### Output:
+![V2Q1](./שלב%20ג/images/V2Q1.png)
 
 ### Query 2: Displaying Trips with Less Than 10 Available Seats
 #### Motivation: 
@@ -988,3 +989,4 @@ Shows trips where fewer than 10 seats are available, along with route and bus de
 ```
 
 #### Output:
+![V2Q2](./שלב%20ג/images/V2Q2.png)
