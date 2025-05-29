@@ -979,13 +979,10 @@ Operations and ticketing teams need to quickly identify trips that are nearly fu
 Shows trips where fewer than 10 seats are available, along with route and bus details.
 
 ```sql
-  SELECT
-      trip_id, departure_time, BusLicensePlate, BusTotalCapacity, AvailableSeats,
+  SELECT trip_id, departure_time, BusLicensePlate, BusTotalCapacity, AvailableSeats,
       route_number, start_location, end_location
-  FROM
-      TripOccupancySummary
-  WHERE
-      AvailableSeats < 10;
+  FROM TripOccupancySummary
+  WHERE AvailableSeats < 10;
 ```
 
 #### Output:
