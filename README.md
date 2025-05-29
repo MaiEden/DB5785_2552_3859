@@ -736,7 +736,7 @@ After reviewing the backup we got, we performed reverse engineering and got this
 
 ![IntegrationERD](./שלב%20ג/images/IntegrationERD.png)
 ### **DSD Schema**
-So we convert to the next DSD schema:
+So we convert it to the next DSD schema:
 
 
 ![IntegrationERD](./שלב%20ג/images/IntegrationDSD.png)
@@ -785,11 +785,15 @@ Stores records of individual bus trips made along a route.
 - A **Bus** is linked to one **Route** at a time, and can appear in multiple **Trips**.
 - Each **Trip** must be assigned to a **Bus**.
 
-### **Full ERD Diagram**
+### **Full DSD Diagram**
 Now, we drow the integraed system ERD:
 
 ![allSystemERD](./שלב%20ג/images/allSystemERD.png)
 
+### **Full ERD Diagram**
+So we convert it to the next DSD schema:
+
+![allSystemDSD](./שלב%20ג/images/allSystemDSD.png)
 
 # Integration
 
@@ -905,6 +909,8 @@ The goal is to provide a comprehensive overview of ticket purchases, enriched wi
 Displays detailed information about each ticket, including passenger name and contact, seat assignment, discount used, ticket pricing (base and final), and trip schedule details.
 
 #### View contant:
+![View1](./שלב%20ג/images/View1.png)
+
 
 ###  Query 1: Displaying All Tickets Sold for a Specific Trip
 #### Motivation:  
@@ -924,6 +930,7 @@ Returns all ticket records for Trip ID 20, including passenger name, seat number
 ```
 
 #### Output:
+![V1Q1](./שלב%20ג/images/V1Q1.png)
 
 ### Query 2: Finding Passengers Who Paid More Than X for Trips Departing on Specific Dates
 #### Motivation:  
@@ -941,6 +948,7 @@ Returns a list of passengers whose trips depart between May 21 and May 23, 2025 
       CAST(TripDepartureTime AS DATE) > '2025-05-20' AND TripDepartureTime  < '2025-05-24' AND FinalPrice > 30.00; 
 ```
 #### Output:
+![V1Q2](./שלב%20ג/images/V1Q2.png)
 
 ## 2. Trip Occupancy Summary for Route & Scheduling / Operations Planning
 #### Motivation: 
@@ -950,6 +958,7 @@ This view is essential for efficient operations planning and route management. I
 Creates a summary view called TripOccupancySummary that includes trip details, route information, bus capacity, and current occupancy statistics based on sold tickets.
 
 #### View contant:
+![View2](./שלב%20ג/images/View2.png)
 
 ### Query 1: Identifying Overcrowded Trips for a Specific Date Range
 #### Motivation: 
