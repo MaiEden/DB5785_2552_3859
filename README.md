@@ -989,5 +989,147 @@ Shows trips where fewer than 10 seats are available, along with route and bus de
 ![V2Q2](./שלב%20ג/images/V2Q2.png)
 
 # Stage D
-At this stage, we will practice writing PL/pgSQL programs using our database tables. 
+At this stage, we will practice writing PL/pgSQL programs using our database tables, including triggers, functions, procedures, and main programs.
+## Triggers
+### 1. Automatically Mark Seat as Unavailable After Ticket Purchase
+#### Motivation:
+To maintain accurate seat availability and prevent double-booking, the system must automatically update the seat's status when a passenger purchases a ticket.
+
+#### What the Trigger Does:
+When a new ticket is inserted into the `Ticket` table, the corresponding seat's `isAvailable` flag is set to `FALSE`, and a notification message is printed with the seat and passenger details.
+
+```sql
+CREATE OR REPLACE FUNCTION trg_mark_seat_unavailable()
+RETURNS TRIGGER AS $$
+DECLARE seat_num INT;
+BEGIN
+    -- Update the seat status to unavailable
+    UPDATE Seat
+    SET isAvailable = FALSE
+    WHERE seatID = NEW.seatID;
+    -- Fetch the seat number for logging
+    SELECT seatNumber INTO seat_num
+    FROM Seat
+    WHERE seatID = NEW.seatID;
+    -- Display a notification
+    RAISE NOTICE 'Seat number % (seatID: %) marked as unavailable due to ticket purchase by passengerID %.',
+        seat_num, NEW.seatID, NEW.passengerID;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+```
+- 👉 **[First Trigger here](./שלב%20ד/sql/trg_mark_seat_unavailable-trigger.sql)**
+
+### 2. Prevent Blocked Passengers from Purchasing Tickets
+#### Motivation:
+To enforce travel restrictions on blocked passengers due to policy violations or misuse, the system must prevent them from purchasing new tickets.
+
+#### What the Trigger Does:
+Before inserting a new ticket into the `Ticket` table, the trigger checks if the passenger is listed in the `BlockedPassenger` table. If so, it raises an exception and prevents the insertion.
+
+```sql
+CREATE OR REPLACE FUNCTION trg_prevent_ticket_for_blocked()
+RETURNS TRIGGER AS $$
+DECLARE
+    is_blocked BOOLEAN;
+BEGIN
+    -- Check if passenger is blocked
+    SELECT EXISTS (
+        SELECT 1 FROM BlockedPassenger WHERE passengerID = NEW.passengerID
+    ) INTO is_blocked;
+    -- If blocked, prevent ticket purchase
+    IF is_blocked THEN
+        RAISE EXCEPTION 'Passenger % is blocked and cannot buy tickets', NEW.passengerID;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+-- Trigger to call the function before inserting a ticket
+CREATE TRIGGER before_ticket_insert
+BEFORE INSERT ON Ticket
+FOR EACH ROW
+EXECUTE FUNCTION trg_prevent_ticket_for_blocked();
+```
+- 👉 **[Second Trigger here](./שלב%20ד/sql/trg_prevent_ticket_for_blocked-trriger.sql)**
+
+## Procedures
+### 1. Apply Discount to Passenger Tickets
+#### Motivation:
+To encourage customer loyalty and support marketing campaigns, discounts should be applied to tickets purchased by specific passengers during a given time frame.
+
+#### What the Procedure Does:
+For a given passenger and date range, the procedure finds all of their tickets that do not already have an associated discount, and applies a specified discount to them. For each ticket, it inserts a record into the `discountTicket` table, and provides feedback via a `NOTICE` message about whether the operation succeeded or failed.
+
+- 👉 **[First Procedure here](./שלב%20ד/sql/apply_discount_to_passenger_tickets-procedure.sql)**
+
+### 2. Block Passenger If Too Many Tickets
+#### Motivation:
+To prevent ticket hoarding or potential misuse, the system should automatically block passengers who purchase an unusually high number of tickets.
+
+### What the Procedure Does:
+Counts the number of tickets purchased by a passenger. If the count exceeds 10, the passenger is added to the `BlockedPassenger` table (unless already blocked), and a `NOTICE` is raised indicating the passenger has been blocked.
+
+- 👉 **[Second Procedure here](./שלב%20ד/sql/block_passenger_if_too_many_tickets-procedure.sql)**
+
+## Functions
+### 1. Find Delayed Trips
+#### Motivation:
+To monitor service quality and punctuality, it's important to detect trips that took longer than expected.
+
+#### What the Function Does:
+Loops over all trips, calculates their actual duration, and raises a notice if the actual time exceeded the expected duration for the associated route.
+
+```sql
+CREATE OR REPLACE FUNCTION find_delayed_trips()
+RETURNS VOID AS $$
+DECLARE
+    rec RECORD;
+    actual_duration_minutes INT;
+BEGIN
+    FOR rec IN
+        SELECT t.trip_id, t.departure_time, t.arrival_time,
+               r.duration_minutes, r.route_number
+        FROM Trip t
+        JOIN Bus b ON t.license_plate = b.license_plate
+        JOIN Route r ON b.route_number = r.route_number
+    LOOP
+        -- חשב משך נסיעה בפועל בדקות
+        actual_duration_minutes := EXTRACT(EPOCH FROM (rec.arrival_time - rec.departure_time)) /60;
+        IF actual_duration_minutes > rec.duration_minutes THEN
+            RAISE NOTICE 'Trip % in route % delayed: expacted time % min, actuall time % min',
+                         rec.trip_id, rec.route_number, actual_duration_minutes, rec.duration_minutes;
+        END IF;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+- 👉 **[First Function here](./שלב%20ד/sql/find_delayed_trips-function.sql)**
+
+### 2. Print Available Seats by Bus
+#### Motivation:
+To help staff or customers quickly identify which seats are available on trips operated by a specific bus.
+
+#### What the Trigger Does:
+Retrieves and prints all available seat numbers along with their trip ID for the given bus license plate.
+
+```sql
+CREATE OR REPLACE FUNCTION print_available_seats_by_bus(p_license_plate VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    FOR rec IN
+        SELECT s.seatNumber, s.tripID
+        FROM Seat s
+        JOIN Trip t ON s.tripID = t.trip_id
+        WHERE t.license_plate = p_license_plate AND s.isAvailable = TRUE
+    LOOP
+        RAISE NOTICE 'Trip %: number of available seats - %', rec.tripID, rec.seatNumber;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+- 👉 **[Second Function here](./שלב%20ד/sql/print_available_seats_by_bus-function.sql)**
+
 
