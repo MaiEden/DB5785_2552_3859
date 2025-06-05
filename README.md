@@ -1132,4 +1132,47 @@ $$ LANGUAGE plpgsql;
 
 - 👉 **[Second Function here](./שלב%20ד/sql/print_available_seats_by_bus-function.sql)**
 
+## Main Programs
+### 1. Run Delay Check and Apply Discounts
+#### Motivation:
+To automatically detect delayed trips and reward affected passengers with a discount.
 
+#### What the Program Does:
+This main program first calls the function `find_delayed_trips` to detect any trips where the actual duration exceeds the expected one. Then, it calls the procedure `apply_discount_to_passenger_tickets` to apply a given discount to all of the specified passenger’s tickets purchased within the last two years.
+
+```sql
+DO $$
+DECLARE
+    v_passenger_id INT := 216967489;
+    v_discount_id INT := 3;
+    v_start_date DATE := CURRENT_DATE - INTERVAL '2 year';
+    v_end_date DATE := CURRENT_DATE;
+BEGIN
+    PERFORM find_delayed_trips();
+    CALL apply_discount_to_passenger_tickets(v_passenger_id, v_discount_id, v_start_date, v_end_date);
+END;
+$$;
+```
+- 👉 **[First Program here](./שלב%20ד/sql/main1.sql)**
+
+
+### 2. Show Free Seats and Possibly Block Passenger
+#### Motivation:
+To assist with monitoring available seats and enforcing a limit on the number of tickets a passenger can hold.
+
+#### What the Program Does:
+Calls the function `print_available_seats_by_bus` to print available seats for a specific bus, and then calls the procedure `block_passenger_if_too_many_tickets` to check if a passenger should be blocked due to holding more than 10 tickets.
+
+```sql
+DO $$
+DECLARE
+    v_license_plate VARCHAR := '180-57-515';
+    v_passenger_id INT := 228524376;
+BEGIN
+    PERFORM print_available_seats_by_bus(v_license_plate);
+    CALL block_passenger_if_too_many_tickets(v_passenger_id);
+END;
+$$;
+```
+
+- 👉 **[Second Program here](./שלב%20ד/sql/main2.sql)**
