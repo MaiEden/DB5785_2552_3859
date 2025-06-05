@@ -1093,7 +1093,6 @@ BEGIN
         JOIN Bus b ON t.license_plate = b.license_plate
         JOIN Route r ON b.route_number = r.route_number
     LOOP
-        -- חשב משך נסיעה בפועל בדקות
         actual_duration_minutes := EXTRACT(EPOCH FROM (rec.arrival_time - rec.departure_time)) /60;
         IF actual_duration_minutes > rec.duration_minutes THEN
             RAISE NOTICE 'Trip % in route % delayed: expacted time % min, actuall time % min',
@@ -1138,7 +1137,7 @@ $$ LANGUAGE plpgsql;
 To automatically detect delayed trips and reward affected passengers with a discount.
 
 #### What the Program Does:
-This main program first calls the function `find_delayed_trips` to detect any trips where the actual duration exceeds the expected one. Then, it calls the procedure `apply_discount_to_passenger_tickets` to apply a given discount to all of the specified passenger’s tickets purchased within the last two years.
+This main program first calls the function `find_delayed_trips` and calls the procedure `apply_discount_to_passenger_tickets`.
 
 ```sql
 DO $$
@@ -1161,7 +1160,7 @@ $$;
 To assist with monitoring available seats and enforcing a limit on the number of tickets a passenger can hold.
 
 #### What the Program Does:
-Calls the function `print_available_seats_by_bus` to print available seats for a specific bus, and then calls the procedure `block_passenger_if_too_many_tickets` to check if a passenger should be blocked due to holding more than 10 tickets.
+Calls the function `print_available_seats_by_bus` and calls the procedure `block_passenger_if_too_many_tickets`.
 
 ```sql
 DO $$
