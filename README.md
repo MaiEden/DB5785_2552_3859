@@ -987,3 +987,7 @@ Shows trips where fewer than 10 seats are available, along with route and bus de
 
 #### Output:
 ![V2Q2](./שלב%20ג/images/V2Q2.png)
+
+# Stage D
+At this stage, we will practice writing PL/pgSQL programs using our database tables. 
+
