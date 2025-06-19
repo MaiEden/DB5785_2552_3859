@@ -1187,5 +1187,6 @@ We used **Python** with the **Flask** framework for the backend. The connection 
 
 The GUI enables users to navigate the system intuitively and perform all required actions directly from the interface.
 
-[![Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://drive.google.com/file/d/1pF40JjeCiEBdU7EclitI0oX7ukeRylrU/view?usp=sharing)
+## App Introduction
+- 👉 [![Demo Video](/שלב%20ה/image/Screenshot%202025-06-19%20160811.png)](https://drive.google.com/file/d/1pF40JjeCiEBdU7EclitI0oX7ukeRylrU/view?usp=sharing)
 
