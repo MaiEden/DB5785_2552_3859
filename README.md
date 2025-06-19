@@ -1177,4 +1177,15 @@ $$;
 - 👉 **[Second Program here](./שלב%20ד/sql/main2.sql)**
 
 
-# Stage D
+# Stage E
+
+In this stage, we built a graphical user interface that allows easy interaction with the database through a web-based application.
+
+The interface supports full CRUD operations on Passenger, Ticket and discountTicket tables, when discountTicket is a junction table, and provides access to stored procedures and SQL queries developed in earlier stages.
+
+We used **Python** with the **Flask** framework for the backend. The connection to the database was established using the **psycopg2** library.
+
+The GUI enables users to navigate the system intuitively and perform all required actions directly from the interface.
+
+[![Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://drive.google.com/file/d/1pF40JjeCiEBdU7EclitI0oX7ukeRylrU/view?usp=sharing)
+

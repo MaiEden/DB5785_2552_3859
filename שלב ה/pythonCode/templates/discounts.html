@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .btn-add {
+    background-color: #008498;
+    color: white;
+    border: none;
+  }
+  .btn-add:hover {
+    background-color: #006e7e;
+  }
+
+  .btn-edit {
+    background-color: #fa824c;
+    color: white;
+    border: none;
+  }
+  .btn-edit:hover {
+    background-color: #e46c36;
+  }
+
+  .btn-delete {
+    background-color: #e23328;
+    color: white;
+    border: none;
+  }
+  .btn-delete:hover {
+    background-color: #c5281f;
+  }
+
+  .table-header-green {
+    background-color: #334b48 !important;
+  }
+
+  .table-header-green th {
+    color: white !important;
+    background-color: #334b48 !important;
+  }
+  body {
+    margin-top: 6rem; /* מתאים ל-navbar fixed-top */
+  }
+</style>
+
+<h2>Apply Discount to Ticket</h2>
+
+<form action="/add_discount" method="POST" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <label class="form-label">Ticket</label>
+    <select name="ticketID" class="form-select" required>
+      {% for t in tickets %}
+        <option value="{{ t[0] }}">{{ t[0] }} – {{ t[1] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Discount</label>
+    <select name="discountID" class="form-select" required>
+      {% for d in discounts %}
+        <option value="{{ d[0] }}">{{ d[0] }} – {{ d[1] }}%</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label">Start Date</label>
+    <input type="date" name="startDate" class="form-control" required>
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label">Expiration Date</label>
+    <input type="date" name="expirationDate" class="form-control" required>
+  </div>
+
+  <div class="col-12">
+    <button type="submit" class="btn btn-add">Apply Discount</button>
+  </div>
+</form>
+
+<h4>Discounts Applied</h4>
+<table class="table table-bordered table-striped">
+  <thead class="table-header-green">
+    <tr>
+      <th>Ticket</th>
+      <th>Passenger</th>
+      <th>Discount (%)</th>
+      <th>Start Date</th>
+      <th>Expiration Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in discount_rows %}
+    <tr>
+      <td>{{ row[0] }}</td>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      <td>{{ row[4] }}</td>
+      <td>
+        <a href="{{ url_for('edit_discount', ticket_id=row[0], discount_id=row[5]) }}" class="btn btn-sm btn-edit">Edit</a>
+        <a href="{{ url_for('delete_discount', ticket_id=row[0], discount_id=row[5]) }}" class="btn btn-sm btn-delete">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

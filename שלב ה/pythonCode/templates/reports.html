@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar {
+    width: 230px;
+    background-color: #06A296;
+    position: fixed;
+    top: 5rem;
+    height: calc(100vh - 5rem);
+    left: 0;
+    overflow-y: auto;
+    padding-top: 1rem;
+  }
+
+  .sidebar .nav-link {
+    color: white;
+    font-size: 1.1rem;
+    padding: 15px 20px;
+  }
+
+  .sidebar .nav-link.active {
+    background-color: white !important;
+    color: #06A296 !important;
+    font-weight: bold;
+  }
+
+  .sidebar .nav-link:hover {
+    background-color: #049085;
+  }
+
+  .main-content {
+    margin-left: 6.5rem;
+    padding: 2rem;
+    padding-top: 6rem;
+  }
+
+  /* עיצוב טבלאות וכפתורים */
+  .table-header-green {
+    background-color: #334b48 !important;
+  }
+
+  .table-header-green th {
+    color: white !important;
+    background-color: #334b48 !important;
+  }
+
+  .btn-add {
+    background-color: #008498;
+    color: white;
+    border: none;
+  }
+
+  .btn-add:hover {
+    background-color: #006e7e;
+  }
+</style>
+
+<div class="sidebar d-flex flex-column">
+  <a class="nav-link {% if section == 'occupancy' %}active{% endif %}" href="{{ url_for('report_occupancy') }}">
+    Seat Occupancy Rate
+  </a>
+  <a class="nav-link {% if section == 'top_discounts' %}active{% endif %}" href="{{ url_for('report_top_discounts') }}">
+    Top Discounted Tickets
+  </a>
+  <a class="nav-link {% if section == 'delayed_trips' %}active{% endif %}" href="{{ url_for('report_delayed_trips') }}">
+    Find Delayed Trips
+  </a>
+  <a class="nav-link {% if section == 'available_seats' %}active{% endif %}" href="{{ url_for('report_available_seats') }}">
+    Available Seats by Bus
+  </a>
+</div>
+
+<div class="main-content">
+  {% if section == 'occupancy' %}
+    <h3>Seat Occupancy Rate</h3>
+    <p>This report helps identify under- or over-utilized trips by calculating the percentage of occupied seats out of 50 for each trip.</p>
+    <table class="table table-striped table-bordered">
+      <thead class="table-header-green">
+        <tr><th>Trip ID</th><th>Occupancy %</th><th>Occupied Seats</th></tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% elif section == 'top_discounts' %}
+    <h3>Tickets with Most Discounts</h3>
+    <p>Identifies tickets with the highest number of discounts to detect possible abuse or system glitches.</p>
+    <table class="table table-striped table-bordered">
+      <thead class="table-header-green">
+        <tr><th>Ticket ID</th><th>Passenger ID</th><th>Discount Count</th></tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% elif section == 'delayed_trips' %}
+    <h3>Delayed Trips</h3>
+    <p>Shows trips that exceeded the expected duration based on the associated route.</p>
+    <table class="table table-striped table-bordered">
+      <thead class="table-header-green">
+        <tr><th>Trip ID</th><th>Route</th><th>Expected Duration</th><th>Actual Duration</th></tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr><td>{{ row[0] }}</td><td>{{ row[4] }}</td><td>{{ row[3] }}</td><td>{{ row[5] }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% elif section == 'available_seats' %}
+    <h3>Available Seats by Bus</h3>
+    <p>Displays available seat numbers for each trip operated by a selected bus (license plate).</p>
+    <form method="post" class="mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <select name="license_plate" class="form-select" required>
+            {% for lp in license_plates %}
+              <option value="{{ lp }}" {% if lp == selected_plate %}selected{% endif %}>{{ lp }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-add">Show Seats</button>
+        </div>
+      </div>
+    </form>
+    {% if data %}
+    <table class="table table-striped table-bordered">
+      <thead class="table-header-green">
+        <tr><th>Trip ID</th><th>Seat Number</th></tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% elif selected_plate %}
+    <div class="alert alert-warning">🚫 There are no available seats on this trip.</div>
+    {% endif %}
+  {% else %}
+    <p>Please select a report from the sidebar.</p>
+  {% endif %}
+</div>
+{% endblock %}

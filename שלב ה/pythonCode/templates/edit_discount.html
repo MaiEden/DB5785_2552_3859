@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Edit Discount</h2>
+
+  <form action="/update_discount/{{ ticket_id }}/{{ discount_id }}" method="POST" class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">New Discount</label>
+      <select name="discountID" class="form-select" required>
+        {% for d in discounts %}
+          <option value="{{ d[0] }}" {% if d[0] == current_discount_id %}selected{% endif %}>
+            {{ d[0] }} – {{ d[1] }}%
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Start Date</label>
+      <input type="date" name="startDate" class="form-control" value="{{ startDate }}" required>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Expiration Date</label>
+      <input type="date" name="expirationDate" class="form-control" value="{{ expirationDate }}" required>
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-success">Save Changes</button>
+      <a href="{{ url_for('discounts') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

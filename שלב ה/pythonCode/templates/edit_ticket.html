@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Edit Ticket</h2>
+  <form action="/update_ticket/{{ ticket[0] }}" method="POST" class="row g-3">
+    <div class="col-md-3">
+      <label class="form-label">Passenger</label>
+      <select name="passengerID" class="form-select" required>
+        {% for p in passengers %}
+          <option value="{{ p[0] }}" {% if p[0] == ticket[3] %}selected{% endif %}>{{ p[0] }} – {{ p[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Seat</label>
+      <select name="seatID" class="form-select" required>
+        {% for s in seats %}
+          <option value="{{ s[0] }}" {% if s[0] == ticket[4] %}selected{% endif %}>Trip {{ s[2] }} – Seat #{{ s[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Price</label>
+      <input type="number" name="price" class="form-control" value="{{ ticket[2] }}" step="0.01" required>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Purchase Date</label>
+      <input type="date" name="purchaseDate" class="form-control" value="{{ ticket[1] }}" required>
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-success">Save Changes</button>
+      <a href="{{ url_for('tickets') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
